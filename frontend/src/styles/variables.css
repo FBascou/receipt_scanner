@@ -1,0 +1,56 @@
+:root {
+  color-scheme: light dark;
+
+  /* Font Families */
+  /* "Segoe UI Adjusted",
+  "Segoe UI", */
+  --font: -apple-system, BlinkMacSystemFont, "Liberation Sans", sans-serif;
+
+  /* Font Weights */
+
+  /* Font Sizes */
+  --h1: clamp(2rem, 1.8rem + 1vw, 3rem);
+  --h2: clamp(1.5rem, 1.5rem + 0.375vw, 2rem);
+  --h3: clamp(1.25rem, 1.175rem + 0.375vw, 1.5rem);
+  --h4: 12;
+  --h5: 12;
+  --h6: 12;
+  --p: clamp(1rem, 0.98rem + 0.1vw, 1.1rem);
+  --p-error: 1rem;
+  --p-success: 1rem;
+  --p-hover: 1.2rem;
+
+  /* Font Colors */
+  --clr-primary: rgb(0, 0, 0, 1);
+  --clr-secondary: rgb(255, 255, 255, 1);
+  --clr-tertiary: rgb(117, 117, 117);
+  --clr-accent: rgb(21, 6, 186);
+  --clr-success: rgb(0, 193, 3);
+  --clr-error: rgb(255, 0, 0, 1);
+  --clr: light-dark(var(--clr-primary), var(--clr-secondary));
+
+  /* Background Colors */
+  --bg-primary: rgb(255, 255, 255, 1);
+  --bg-secondary: rgb(34, 34, 34);
+  --bg-tertiary: rgb(211, 211, 211, 1);
+  --bg-accent: var(--clr-accent);
+  --bg-accent-hover: rgb(18, 90, 161);
+  --bg: light-dark(var(--bg-primary), var(--bg-secondary));
+
+  /* Borders and BoxShadows */
+  --border-clr-primary: var(--bg-tertiary);
+  --border-clr-focus: var(--clr-primary);
+  --border-clr-success: var(--clr-success);
+  --border-clr-error: var(--clr-error);
+  --border-size: 2px;
+  --border: var(--border-size) solid var(--border-clr-primary);
+  --border-focus: var(--border-size) solid var(--border-clr-focus);
+  --border-success: var(--border-size) solid var(--border-clr-success);
+  --border-error: var(--border-size) solid var(--border-clr-error);
+  /* 0.25 looks good in light and 0.5 looks good in dark, decide */
+  --box-shadow: 0 0 2px 1px rgb(0, 0, 0, 0.5);
+
+  /* Paddings */
+  --p-layout-inline: calc(2rem + 1.5625vw);
+  --p-layout-block: 1rem;
+}

@@ -1,0 +1,66 @@
+---
+import TabList from "./TabList.astro";
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+const handleClick = () => console.log("hello");
+const tabData = [
+  { text: "Daily", handleClick },
+  { text: "Monthly", handleClick },
+  { text: "Yearly", handleClick },
+];
+---
+
+<div class="chart-container" data-chart-container data-chart-id={id}>
+  <TabList tabData={tabData} />
+  <div id={id}></div>
+</div>
+
+<script>
+  import { renderLineChart } from "../utils/renderLineChart.ts";
+
+  const data = [
+    { date: "2025-01-01", amount: 120.5 },
+    { date: "2025-01-05", amount: 340.0 },
+    { date: "2025-01-10", amount: 210.75 },
+    { date: "2025-01-15", amount: 480.0 },
+  ];
+
+  // Select ALL chart containers on the page
+  const containers = document.querySelectorAll<HTMLElement>("[data-chart-container]");
+
+  containers.forEach((container) => {
+    const chartId = container.dataset.chartId;
+
+    // Should have a fallback component or message
+    if (!chartId) return;
+
+    // Prevent double render if Astro re-runs script
+    if (container.dataset.initialized) return;
+    container.dataset.initialized = "true";
+
+    renderLineChart({
+      selector: `#${chartId}`,
+      data,
+      x: (d) => d.date,
+      y: (d) => d.amount,
+    });
+  });
+</script>
+
+<style>
+  .tooltip {
+    position: absolute;
+    background: #111;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+</style>

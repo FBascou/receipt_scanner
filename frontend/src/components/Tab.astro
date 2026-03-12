@@ -1,0 +1,20 @@
+---
+interface Props {
+  tab: {
+    text: string;
+    handleClick: () => void;
+  };
+}
+
+const { tab } = Astro.props;
+const { text } = tab;
+---
+
+<button type="button" class="tab-button">{text}</button>
+
+<style>
+  .tab-button {
+    box-shadow: var(--box-shadow);
+    padding: 0.5rem;
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+import CardList from "../components/CardList.astro";
+import ChartLine from "../components/ChartLine.astro";
+import Layout from "../layouts/Layout.astro";
+import Section from "../layouts/Section.astro";
+
+// import { requireUser } from "../../lib/auth/requireUser";
+
+export const prerender = false;
+
+type CardType = {
+  id: number;
+  title: string;
+  value: string | number;
+};
+
+// const res = await fetch(
+//   `http://127.0.0.1:8000/jobs/?page=1&page_size=20&sort_by=uploaded_at&order=desc`,
+// );
+// const data = await res.json();
+
+// console.log(data);
+
+// If multiple devices connected, then receipts scanned in device 1, device n... receipt amount in device 1, device n...
+const overviewCards: CardType[] = [
+  {
+    id: 0,
+    title: "Devices connected",
+    value: 1,
+  },
+  {
+    id: 1,
+    title: "Receipts scanned",
+    value: 582,
+  },
+  {
+    id: 2,
+    title: "Total receipt amount",
+    value: 2500,
+  },
+];
+
+// const user = requireUser(Astro);
+---
+
+<Layout title="Dashboard">
+  <h1>Dashboard</h1>
+  <Section title="Overview">
+    <CardList size="s" cardList={overviewCards} />
+  </Section>
+  <Section title="Total sales" direction="row">
+    <ChartLine id="total-sales" />
+    <ChartLine id="total-receipts" />
+  </Section>
+</Layout>

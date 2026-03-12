@@ -1,0 +1,14 @@
+---
+import TableReceipts from "../features/receipts/TableReceipts.astro";
+import Layout from "../layouts/Layout.astro";
+import Section from "../layouts/Section.astro";
+
+export const prerender = false;
+---
+
+<Layout title="Receipts">
+  <h1>Receipts</h1>
+  <Section>
+    <TableReceipts />
+  </Section>
+</Layout>

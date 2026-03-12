@@ -1,0 +1,36 @@
+---
+import { getRegisterAction } from "../features/auth/actions/getRegisterAction";
+import FormRegister from "../features/auth/components/FormRegister.astro";
+import Layout from "../layouts/Layout.astro";
+import Section from "../layouts/Section.astro";
+
+export const prerender = false;
+
+let errorMessage: string | null = null;
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const confirm = formData.get("confirm");
+  const data = {
+    email: String(email ?? ""),
+    password: String(password ?? ""),
+    confirm: String(confirm ?? ""),
+  };
+  const result = await getRegisterAction(data, Astro);
+
+  if (result instanceof Response) {
+    return result;
+  }
+
+  errorMessage = result?.message ?? null;
+}
+---
+
+<Layout title="Register">
+  <h1>Register</h1>
+  <Section>
+    <FormRegister errorMessage={errorMessage} />
+  </Section>
+</Layout>

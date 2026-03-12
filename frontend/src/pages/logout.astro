@@ -1,0 +1,5 @@
+---
+export const prerender = false;
+Astro.cookies.delete("access_token", { path: "/" });
+return Astro.redirect("/login");
+---

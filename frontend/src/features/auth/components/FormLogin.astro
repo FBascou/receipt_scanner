@@ -1,0 +1,166 @@
+---
+import Button from "../../../components/Button.astro";
+import ButtonLink from "../../../components/ButtonLink.astro";
+
+type Props = { errorMessage: string | null };
+const { errorMessage } = Astro.props;
+---
+
+<form method="POST">
+  <fieldset name="form-login">
+    <legend>Login form</legend>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" />
+      <p class="message-error" id="email-error"></p>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+      <button type="button" id="password-button">O</button>
+      <p class="message-error" id="password-error"></p>
+    </div>
+    <div class="form-group">
+      <Button text="Login" type="submit" />
+      {
+        errorMessage ? (
+          <p class="message-error" id="form-error">
+            {errorMessage}
+          </p>
+        ) : null
+      }
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Forgot your password</legend>
+    <p>Forgot your password?</p>
+    <ButtonLink text="Reset it" href="/forgot-password" style="secondary" />
+  </fieldset>
+  <fieldset>
+    <legend>Register</legend>
+    <p>Don't have an account?</p>
+    <ButtonLink text="Register" href="/register" style="secondary" />
+  </fieldset>
+</form>
+
+<script>
+  import { z } from "zod";
+  import { handleShowPasswordButton } from "../utils/authUtils";
+
+  const form = document.querySelector("form");
+  const inputs = document.querySelectorAll("input");
+  const passwordInput: HTMLInputElement | null = document.querySelector("#password");
+  const passwordButton: HTMLButtonElement | null = document.querySelector("#password-button");
+
+  handleShowPasswordButton(passwordButton, passwordInput);
+
+  const LoginSchema = z.object({
+    email: z.email({ error: "Invalid email address" }).min(1, { error: "Email cannot be empty" }),
+    password: z.string().min(1, { error: "Password cannot be empty" }),
+  });
+
+  type LoginSchemaType = z.infer<typeof LoginSchema>;
+
+  type LoginSchemaFlattenedErrorsType =
+    | z.core.$ZodFlattenedError<LoginSchemaType, { message: string; errorCode: string }>
+    | { fieldErrors?: Record<string, string[]> };
+
+  let formValues: Record<string, string> = {};
+
+  const handleInputChange = () => {
+    return inputs?.forEach((element) => {
+      if (element instanceof HTMLFormElement || element instanceof HTMLInputElement) {
+        if (element.name) {
+          formValues[element.name] = element.value;
+        }
+      }
+    });
+  };
+
+  const handleInputErrors = (
+    result: z.ZodSafeParseResult<{
+      email: string;
+      password: string;
+    }>,
+  ) => {
+    const errors: LoginSchemaFlattenedErrorsType = result.success
+      ? {}
+      : z.flattenError(result.error);
+
+    return inputs?.forEach((input) => {
+      const errorMessage = document.getElementById(`${input?.name}-error`) as HTMLParagraphElement;
+      if (!input.value) {
+        input.style.borderBottom = "var(--border-error)";
+        if (errors?.fieldErrors?.[input.name]) {
+          errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
+        } else {
+          errorMessage.textContent = "";
+        }
+      } else {
+        // input.style.borderBottom = "var(--border-success)";
+        errorMessage.textContent = "";
+      }
+    });
+  };
+
+  form?.addEventListener("change", (event) => {
+    handleInputChange();
+
+    const result = LoginSchema.safeParse(formValues);
+
+    if (!result.success) {
+      event.preventDefault();
+      handleInputErrors(result);
+
+      return;
+    }
+  });
+
+  form?.addEventListener("submit", (event) => {
+    handleInputChange();
+
+    const result = LoginSchema.safeParse(formValues);
+
+    if (!result.success) {
+      event.preventDefault();
+      handleInputErrors(result);
+    }
+  });
+</script>
+
+<style>
+  form {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  legend {
+    visibility: hidden;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid black;
+  }
+
+  #password {
+    anchor-name: --password-input;
+  }
+
+  #password-button {
+    position-anchor: --password-input;
+    position: absolute;
+    right: calc(anchor(right) + 10px);
+    top: anchor(top);
+    align-self: anchor-center;
+    background-color: transparent;
+  }
+</style>

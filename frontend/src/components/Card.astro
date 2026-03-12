@@ -1,0 +1,35 @@
+---
+type CardType = {
+  id: number;
+  title: string;
+  value: string | number;
+};
+
+type CardSizeType = "s" | "m" | "l";
+
+interface Props {
+  size: CardSizeType;
+  card: CardType;
+}
+
+const { size, card } = Astro.props;
+---
+
+<div class=`card-container card-size-${size}`>
+  <p>{card.title}</p>
+  <span>{card.value}</span>
+</div>
+
+<style>
+  .card-container {
+    width: 200px;
+    height: 75px;
+    padding: 1rem;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+</style>

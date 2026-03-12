@@ -1,0 +1,31 @@
+---
+import { getLoginAction } from "../features/auth/actions/getLoginAction";
+import FormLogin from "../features/auth/components/FormLogin.astro";
+import Layout from "../layouts/Layout.astro";
+import Section from "../layouts/Section.astro";
+
+export const prerender = false;
+
+let errorMessage: string | null = null;
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const data = { email: String(email ?? ""), password: String(password ?? "") };
+  const result = await getLoginAction(data, Astro);
+
+  if (result instanceof Response) {
+    return result;
+  }
+
+  errorMessage = result?.message ?? null;
+}
+---
+
+<Layout title="Login">
+  <h1>Login</h1>
+  <Section>
+    <FormLogin errorMessage={errorMessage} />
+  </Section>
+</Layout>

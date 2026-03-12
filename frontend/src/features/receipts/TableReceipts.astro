@@ -1,0 +1,137 @@
+---
+import ButtonLink from "../../components/ButtonLink.astro";
+import TablePagination from "../../components/TablePagination.astro";
+
+type TableDataHeadersType = string[];
+
+type TableDataRowsType = {
+  id: string;
+  uploaded_at: string;
+  idDevice: number;
+  image_count: number;
+  totalAmount: number;
+  source: string;
+  status: string;
+};
+
+type TableDataPaginationType = {
+  total: number;
+  page_size: number;
+  current_page: number;
+};
+
+enum FileTypeEnum {
+  CSV = "csv",
+  PDF = "pdf",
+  JSON = "json",
+}
+
+const page = Number(Astro.url.searchParams.get("page") ?? "1");
+const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
+const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
+const order = String(Astro.url.searchParams.get("order") ?? "desc");
+
+const res = await fetch(
+  `http://127.0.0.1:8000/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`,
+);
+
+const { items, total, page: current_page, page_size } = await res.json();
+
+const caption = "List of all receipts scanned and uploaded";
+const headers: TableDataHeadersType = [
+  "",
+  "Date uploaded",
+  "Device Id",
+  "Number of receipts",
+  "Total amount (€)",
+  "Source",
+  "Status",
+  "",
+  "",
+];
+const rows: TableDataRowsType[] = items;
+
+const handleFileDownload = (jobId: string, fileType: FileTypeEnum) => {
+  return `http://127.0.0.1:8000/jobs/${jobId}/download/${fileType}`;
+};
+
+const pagination: TableDataPaginationType = { total, page_size, current_page };
+---
+
+<div>
+  <table>
+    <div class="table-header">
+      {caption ? <caption>{caption}</caption> : null}
+      <ButtonLink
+        href={"/upload-receipts"}
+        text="Click here to upload receipts manually"
+        style="secondary"
+      />
+    </div>
+    <thead>
+      <tr>
+        {headers.map((header) => <th scope="col">{header}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row, index) => (
+          <tr>
+            <td>{index + 1}</td>
+            <td>{new Date(row.uploaded_at).toLocaleString()}</td>
+            <td>{row.idDevice}</td>
+            <td>{row.image_count}</td>
+            <td>{row.totalAmount}</td>
+            <td>{row.source}</td>
+            <td>{row.status}</td>
+            <td>
+              <ButtonLink href={handleFileDownload(row.id, FileTypeEnum.PDF)} text="Download PDF" />
+            </td>
+            <td>
+              <ButtonLink href={handleFileDownload(row.id, FileTypeEnum.CSV)} text="Download CSV" />
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  {pagination ? <TablePagination pagination={pagination} /> : null}
+</div>
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+  }
+
+  caption,
+  thead {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .table-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  tr {
+    /* outline: var(--border); */
+    box-shadow: var(--box-shadow);
+  }
+
+  tr:has(td):hover,
+  tr:has(a:focus-visible) {
+    background-color: light-dark(var(--bg-tertiary), var(--bg-secondary));
+    color: light-dark(var(--clr-primary), var(--clr-secondary));
+  }
+
+  th,
+  td {
+    padding: 1rem;
+    text-align: left;
+  }
+</style>

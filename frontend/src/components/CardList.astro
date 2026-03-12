@@ -1,0 +1,31 @@
+---
+import Card from "../components/Card.astro";
+type CardType = {
+  id: number;
+  title: string;
+  value: string | number;
+};
+
+type CardSizeType = "s" | "m" | "l";
+type CardListType = CardType[];
+
+interface Props {
+  size: CardSizeType;
+  cardList: CardListType;
+}
+
+const { size, cardList } = Astro.props;
+---
+
+<div class="card-list-container">
+  {cardList.map((card) => <Card size={size} card={card} />)}
+</div>
+
+<style>
+  .card-list-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3rem;
+  }
+</style>

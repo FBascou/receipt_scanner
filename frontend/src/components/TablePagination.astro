@@ -1,0 +1,115 @@
+---
+type TableDataPaginationType = {
+  total: number;
+  page_size: number;
+  current_page: number;
+};
+interface Props {
+  pagination: TableDataPaginationType;
+}
+// TODO
+// Selecting page size resets when changing page
+// add ..., first page and last page
+
+const { pagination } = Astro.props;
+const { total, page_size, current_page } = pagination;
+// const totalPages = 20;
+const totalPages = Math.ceil(total / page_size);
+const pageSizeList = [2, 5, 10, 15, 20, 50];
+const previousPages = current_page > 2 ? current_page - 3 : 0;
+const nextPages = current_page > 0 ? current_page + 2 : 0;
+---
+
+<nav aria-label="Pagination" class="pagination-container">
+  <ul class="pagination-pages">
+    {
+      current_page > 1 && (
+        <li>
+          <a href={`?page=${current_page - 1}`} rel="prev">
+            Previous
+          </a>
+        </li>
+      )
+    }
+    {
+      totalPages > 1
+        ? Array.from({ length: totalPages })
+            .map((_, i) => {
+              const pageNumber = i + 1;
+              const isCurrent = pageNumber === current_page;
+              const url = new URL(Astro.url);
+              url.searchParams.set("page", pageNumber.toString());
+
+              return (
+                <li>
+                  <a
+                    class={isCurrent ? "selected-page-number" : undefined}
+                    href={url.pathname + url.search}
+                    aria-current={isCurrent ? "page" : undefined}
+                  >
+                    {pageNumber}
+                  </a>
+                </li>
+              );
+            })
+            .slice(previousPages, nextPages)
+        : null
+    }
+
+    {
+      current_page < totalPages && (
+        <li>
+          <a href={`?page=${current_page + 1}`} rel="next">
+            Next
+          </a>
+        </li>
+      )
+    }
+  </ul>
+  <form method="GET" action={`/receipts?page=${current_page}`} class="pagination-page-size">
+    <label for="page-size-select">Items per page:</label>
+    <select
+      class="page-size-select"
+      name="page_size"
+      id="page-size-select"
+      onchange="this.form.submit()"
+    >
+      {
+        pageSizeList.map((size) => (
+          <option value={size} selected={size === page_size}>
+            {size}
+          </option>
+        ))
+      }
+    </select>
+  </form>
+</nav>
+
+<style>
+  .pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .selected-page-number {
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--clr-accent);
+  }
+
+  .pagination-page-size {
+  }
+
+  .page-size-select {
+    width: 50px;
+    box-shadow: var(--box-shadow);
+  }
+</style>

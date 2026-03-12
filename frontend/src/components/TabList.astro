@@ -1,0 +1,26 @@
+---
+import Tab from "./Tab.astro";
+
+interface Props {
+  tabData: {
+    text: string;
+    handleClick: () => void;
+  }[];
+  size?: "s" | "m" | "l";
+}
+
+const { tabData = [], size = "m" } = Astro.props;
+---
+
+<nav class=`tab-list-container size-${size}`>
+  {tabData.map((tab) => <Tab tab={tab} />)}
+</nav>
+
+<style>
+  .tab-list-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+</style>

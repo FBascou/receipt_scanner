@@ -1,0 +1,180 @@
+---
+import ButtonLink from "../components/ButtonLink.astro";
+
+const notificationList = [
+  { id: 0, notification: "Notification 1", url: "/notification" },
+  { id: 1, notification: "Notification 2", url: "/notification" },
+  { id: 2, notification: "Notification 3", url: "/notification" },
+  { id: 3, notification: "Notification 4", url: "/notification" },
+  { id: 4, notification: "Notification 5", url: "/notification" },
+];
+
+const navLinksPublic = [
+  { url: "/login", name: "Login" },
+  { url: "/register", name: "Register" },
+];
+
+const navLinksProtected = [
+  { url: "/", name: "Dashboard" },
+  { url: "/receipts", name: "Receipts" },
+];
+
+const navButtonProtectedLinks = [
+  { url: "/account", name: "Account" },
+  { url: "/devices", name: "Devices" },
+  { url: "/settings", name: "Settings" },
+  { url: "/subscription", name: "Subscription" },
+  { url: "/logout", name: "Logout" },
+];
+
+const user = Astro.locals.user;
+---
+
+{
+  user ? (
+    <nav class="nav-container" aria-label="Primary navigation">
+      <ul class="nav-links" role="menu">
+        {navLinksProtected.map((link) => (
+          <li class="nav-link">
+            {/*  role="menuitem" */}
+            <ButtonLink href={link.url} text={link.name} />
+          </li>
+        ))}
+      </ul>
+      <ul class="nav-buttons">
+        <li class="nav-button">
+          <button
+            type="button"
+            class="nav-button-dropdown"
+            id="nav-button-notifications"
+            aria-controls="navButtonLinks"
+            aria-haspopup="true"
+            data-target="nav-button-link-notifications"
+            popovertarget="nav-button-link-notifications"
+          >
+            N
+          </button>
+        </li>
+        <li class="nav-button">
+          <button
+            type="button"
+            class="nav-button-dropdown"
+            id="nav-button-profile"
+            aria-controls="navButtonLinks"
+            aria-haspopup="true"
+            data-target="nav-button-link-profile"
+            popovertarget="nav-button-link-profile"
+          >
+            P
+          </button>
+        </li>
+      </ul>
+      <ul class="nav-button-links" id="nav-button-link-notifications" role="menu" popover>
+        {notificationList.map((item) => (
+          <li>
+            {/*  role="menuitem" */}
+            <ButtonLink href={item.url} text={item.notification} />
+          </li>
+        ))}
+      </ul>
+      <ul class="nav-button-links" id="nav-button-link-profile" role="menu" popover>
+        {navButtonProtectedLinks.map((link) => (
+          <li class="nav-link">
+            {/*  role="menuitem" */}
+            <ButtonLink href={link.url} text={link.name} />
+          </li>
+        ))}
+      </ul>
+    </nav>
+  ) : (
+    <nav class="nav-container" aria-label="Primary navigation">
+      <ul class="nav-links" role="menu">
+        {navLinksPublic.map((link) => (
+          <li class="nav-link">
+            {/*  role="menuitem" */}
+            <ButtonLink href={link.url} text={link.name} />
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  .nav-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+
+      .nav-button {
+        button {
+          border-radius: 50%;
+          border: 1px solid black;
+          corner-shape: circle;
+          padding: 0.5rem;
+          cursor: pointer;
+        }
+      }
+    }
+
+    #nav-button-profile {
+      anchor-name: --button-profile;
+    }
+
+    #nav-button-link-profile {
+      position-anchor: --button-profile;
+      position-try-fallbacks: --nav-button-position;
+    }
+
+    #nav-button-notifications {
+      anchor-name: --button-notifications;
+    }
+
+    #nav-button-link-notifications {
+      position-anchor: --button-notifications;
+      position-try-fallbacks: --nav-button-position;
+    }
+
+    .nav-button-links {
+      margin: 0;
+      position: absolute;
+      inset: auto;
+      top: anchor(bottom);
+      right: anchor(right);
+      margin-block-start: 1rem;
+      /* margin-right: -3rem; */
+      /* transition: max-height 1s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-behavior: allow-discrete;
+      max-height: 0; */
+    }
+
+    .nav-button-links:popover-open {
+      display: grid;
+      box-shadow: var(--box-shadow);
+      padding: 1rem;
+      gap: 0.5rem;
+      /* max-height: 500px; */
+
+      /* @starting-style {
+        max-height: 0;
+      } */
+    }
+
+    @position-try --nav-button-position {
+      inset: auto;
+      right: anchor(left);
+    }
+  }
+</style>

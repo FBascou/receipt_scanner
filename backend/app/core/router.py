@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from typing import Any, Callable
 from app.core.responses import DEFAULT_ERROR_RESPONSES
 
-
 class APIRouterWithErrors(APIRouter):
 
     def add_api_route(

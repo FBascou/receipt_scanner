@@ -1,7 +1,6 @@
 from typing import Any
 from app.schemas.error import ErrorResponse
 
-
 DEFAULT_ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
     400: {"model": ErrorResponse, "description": "Bad request"},
     401: {"model": ErrorResponse, "description": "Unauthorized"},

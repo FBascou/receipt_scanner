@@ -19,13 +19,50 @@ class APIException(HTTPException):
             }
         }
         super().__init__(status_code=status_code, detail=detail)
+
+# REGISTER
+class EmailAlreadyRegistered(APIException):
+    def __init__(self):
+        super().__init__(
+            status_code=400,
+            code=EMAIL_ALREADY_REGISTERED,
+            message="Email already registered, please try a different one",
+            field="email",
+        ) 
         
+class PasswordTooShort(APIException):
+    def __init__(self):
+        super().__init__(
+            status_code=400,
+            code=PASSWORD_TOO_SHORT,
+            message="Password should have a minimum of 8 characters",
+            field="password",
+        ) 
+ 
+class PasswordNotValid(APIException):
+    def __init__(self):
+        super().__init__(
+            status_code=400,
+            code=PASSWORD_NOT_VALID,
+            message="Password should have at least one uppercase English letter, one lowercase English letter, one number, and one special character (#, ?, !, @, $, %, ^, &, *, -)",
+            field="password",
+        ) 
+     
+# LOGIN     
 class InvalidCredentials(APIException):
     def __init__(self):
         super().__init__(
             status_code=401,
             code=INVALID_CREDENTIALS,
             message="Invalid email or password",
+        )
+
+class Forbidden(APIException):
+    def __init__(self):
+        super().__init__(
+            status_code=403,
+            code=FORBIDDEN,
+            message="You are not allowed to access this resource",
         )
 
 class UserNotFound(APIException):
@@ -37,15 +74,6 @@ class UserNotFound(APIException):
             field="user_id",
         )
 
-class EmailAlreadyRegistered(APIException):
-    def __init__(self):
-        super().__init__(
-            status_code=400,
-            code=EMAIL_ALREADY_REGISTERED,
-            message="Email already registered",
-            field="email",
-        )
-
 class JobNotFound(APIException):
     def __init__(self):
         super().__init__(
@@ -53,12 +81,4 @@ class JobNotFound(APIException):
             code=JOB_NOT_FOUND,
             message="Job not found",
             field="job_id",
-        )
-
-class Forbidden(APIException):
-    def __init__(self):
-        super().__init__(
-            status_code=403,
-            code=FORBIDDEN,
-            message="You are not allowed to access this resource",
         )

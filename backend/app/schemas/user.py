@@ -1,14 +1,23 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, field_validator
 from uuid import UUID
 from datetime import datetime
+from app.api.utils import validate_password_strength
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8)
+    password: str
+    
+    @field_validator("password")
+    def validate_password_field(cls, v: str):
+        return validate_password_strength(v)
     
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    
+    @field_validator("password")
+    def validate_password_field(cls, v: str):
+        return validate_password_strength(v)
 
 class UserResponse(BaseModel):
     id: UUID
@@ -17,3 +26,11 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class UserPasswordChange(BaseModel):
+    old_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    def validate_new_password(cls, v: str):
+        return validate_password_strength(v)

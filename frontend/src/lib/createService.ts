@@ -13,6 +13,7 @@ export function createService<Input, Parsed, Output, ErrorType>(
 ) {
   return async function service(context: APIContext, data: Input) {
     const parsed = schema.safeParse(data);
+    console.log("createService parsed", parsed);
 
     if (!parsed.success) {
       return err({

@@ -89,17 +89,24 @@ const { errorMessage } = Astro.props;
 
     return inputs?.forEach((input) => {
       const errorMessage = document.getElementById(`${input?.name}-error`) as HTMLParagraphElement;
-      if (!input.value) {
+      if (!input.value || errors?.fieldErrors?.[input.name]) {
         input.style.borderBottom = "var(--border-error)";
-        if (errors?.fieldErrors?.[input.name]) {
-          errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
-        } else {
-          errorMessage.textContent = "";
-        }
+        errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
       } else {
-        // input.style.borderBottom = "var(--border-success)";
+        input.style.borderBottom = "var(--border-success)";
         errorMessage.textContent = "";
       }
+      // if (!input.value) {
+      //   input.style.borderBottom = "var(--border-error)";
+      //   if (errors?.fieldErrors?.[input.name]) {
+      //     errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
+      //   } else {
+      //     errorMessage.textContent = "";
+      //   }
+      // } else {
+      //   // input.style.borderBottom = "var(--border-success)";
+      //   errorMessage.textContent = "";
+      // }
     });
   };
 
@@ -107,13 +114,13 @@ const { errorMessage } = Astro.props;
     handleInputChange();
 
     const result = LoginSchema.safeParse(formValues);
+    handleInputErrors(result);
 
-    if (!result.success) {
-      event.preventDefault();
-      handleInputErrors(result);
+    // if (!result.success) {
+    //   event.preventDefault();
 
-      return;
-    }
+    //   return;
+    // }
   });
 
   form?.addEventListener("submit", (event) => {
@@ -122,8 +129,8 @@ const { errorMessage } = Astro.props;
     const result = LoginSchema.safeParse(formValues);
 
     if (!result.success) {
-      event.preventDefault();
       handleInputErrors(result);
+      event.preventDefault();
     }
   });
 </script>

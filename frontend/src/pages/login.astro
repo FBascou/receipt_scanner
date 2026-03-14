@@ -12,7 +12,7 @@ if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const data = { email: String(email ?? ""), password: String(password ?? "") };
+  const data = { email: String(email), password: String(password) };
   const result = await getLoginAction(data, Astro);
 
   if (result instanceof Response) {

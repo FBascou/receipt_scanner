@@ -1,36 +1,37 @@
 ---
 import { getRegisterAction } from "../features/auth/actions/getRegisterAction";
 import FormRegister from "../features/auth/components/FormRegister.astro";
+import type { RegisterPostType } from "../features/auth/types/authTypes";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
 
 export const prerender = false;
 
+let values: RegisterPostType = {
+  email: "",
+  password: "",
+  confirm: "",
+};
+
 let errorMessage: string | null = null;
 
 if (Astro.request.method === "POST") {
-  const formData = await Astro.request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const confirm = formData.get("confirm");
-  const data = {
-    email: String(email ?? ""),
-    password: String(password ?? ""),
-    confirm: String(confirm ?? ""),
-  };
-  const result = await getRegisterAction(data, Astro);
+  values = Object.fromEntries(await Astro.request.formData()) as RegisterPostType;
+
+  const result = await getRegisterAction(values, Astro);
+  console.log("result", result);
 
   if (result instanceof Response) {
     return result;
   }
 
-  errorMessage = result?.message ?? null;
+  errorMessage = result?.details?.error?.message ?? result?.message ?? null;
 }
 ---
 
 <Layout title="Register">
   <h1>Register</h1>
   <Section>
-    <FormRegister errorMessage={errorMessage} />
+    <FormRegister errorMessage={errorMessage} values={values} />
   </Section>
 </Layout>

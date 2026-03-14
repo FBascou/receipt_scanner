@@ -4,13 +4,14 @@ interface Props {
   type?: HTMLButtonElement["type"];
   style?: "primary" | "secondary";
   id?: string;
+  disabled?: boolean;
   onClick?: () => string;
 }
 
-const { text, type = "button", style = "primary" } = Astro.props;
+const { text, type = "button", style = "primary", disabled = false } = Astro.props;
 ---
 
-<button type={type} class={`button-${style}`}>{text}</button>
+<button type={type} class={`button-${style}`} disabled={disabled}>{text}</button>
 
 <style>
   .button-primary {

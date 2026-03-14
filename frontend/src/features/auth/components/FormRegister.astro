@@ -2,8 +2,16 @@
 import Button from "../../../components/Button.astro";
 import ButtonLink from "../../../components/ButtonLink.astro";
 
-type Props = { errorMessage: string | null };
-const { errorMessage } = Astro.props;
+type Props = {
+  errorMessage: string | null;
+  values: {
+    email: string;
+    password: string;
+    confirm: string;
+  };
+};
+
+const { errorMessage, values } = Astro.props;
 ---
 
 <form method="POST">
@@ -11,18 +19,18 @@ const { errorMessage } = Astro.props;
     <legend>Register form</legend>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" name="email" />
+      <input type="email" id="email" name="email" value={values?.email ?? ""} />
       <p class="message-error" id="email-error"></p>
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" />
+      <input type="password" id="password" name="password" value={values?.password ?? ""} />
       <button type="button" id="password-button">O</button>
       <p class="message-error" id="password-error"></p>
     </div>
     <div class="form-group">
       <label for="confirm">Confirm Password</label>
-      <input type="password" id="confirm" name="confirm" />
+      <input type="password" id="confirm" name="confirm" value={values?.confirm ?? ""} />
       <button type="button" id="confirm-button">O</button>
       <p class="message-error" id="confirm-error"></p>
     </div>
@@ -63,11 +71,9 @@ const { errorMessage } = Astro.props;
   let formValues: Record<string, string> = {};
 
   const handleInputChange = () => {
-    return inputs?.forEach((element) => {
-      if (element instanceof HTMLFormElement || element instanceof HTMLInputElement) {
-        if (element.name) {
-          formValues[element.name] = element.value;
-        }
+    return inputs.forEach((input) => {
+      if (input.name) {
+        formValues[input.name] = input.value;
       }
     });
   };
@@ -85,13 +91,10 @@ const { errorMessage } = Astro.props;
 
     return inputs?.forEach((input) => {
       const errorMessage = document.getElementById(`${input?.name}-error`) as HTMLParagraphElement;
-      if (!input.value) {
+
+      if (!input.value || errors?.fieldErrors?.[input.name]) {
         input.style.borderBottom = "var(--border-error)";
-        if (errors?.fieldErrors?.[input.name]) {
-          errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
-        } else {
-          errorMessage.textContent = "";
-        }
+        errorMessage.textContent = errors?.fieldErrors?.[input.name]?.[0] ?? null;
       } else {
         input.style.borderBottom = "var(--border-success)";
         errorMessage.textContent = "";
@@ -99,27 +102,22 @@ const { errorMessage } = Astro.props;
     });
   };
 
-  form?.addEventListener("change", (event) => {
-    handleInputChange();
-
-    const result = RegisterSchema.safeParse(formValues);
-
-    if (!result.success) {
-      event.preventDefault();
+  inputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      handleInputChange();
+      const result = RegisterSchema.safeParse(formValues);
       handleInputErrors(result);
-
-      return;
-    }
+    });
   });
 
   form?.addEventListener("submit", (event) => {
     handleInputChange();
 
     const result = RegisterSchema.safeParse(formValues);
+    handleInputErrors(result);
 
     if (!result.success) {
       event.preventDefault();
-      handleInputErrors(result);
     }
   });
 </script>

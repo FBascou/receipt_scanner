@@ -1,0 +1,75 @@
+---
+import Button from "../../../components/Button.astro";
+
+type Props = {
+  errorMessage: string | null;
+  values: {
+    files: string[];
+  };
+};
+
+const { errorMessage, values } = Astro.props;
+---
+
+<form method="POST" enctype="multipart/form-data">
+  <fieldset name="form-upload-receipts">
+    <legend>Upload receipts form</legend>
+    <div class="form-group">
+      <label for="files">Upload a batch of receipts manually (.jpg, .jpeg, .png)</label>
+      <input
+        type="file"
+        name="files"
+        id="files"
+        multiple
+        accept=".jpg, .jpeg, .png"
+        value={values.files}
+      />
+      <p class="message-error" id="files-error"></p>
+    </div>
+    <div class="form-group">
+      <Button text="Upload receipts" type="submit" />
+      {
+        errorMessage ? (
+          <p class="message-error" id="form-error">
+            {errorMessage}
+          </p>
+        ) : null
+      }
+    </div>
+  </fieldset>
+</form>
+
+<script>
+  import { handleForm } from "../../../utils/utils";
+  import { ScanBatchSchema } from "../schemas/receiptSchemas";
+
+  const form = document.querySelector("form");
+
+  if (form instanceof HTMLFormElement) {
+    handleForm(form, ScanBatchSchema);
+  }
+</script>
+
+<style>
+  form {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  legend {
+    visibility: hidden;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid black;
+  }
+</style>

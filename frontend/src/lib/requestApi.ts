@@ -9,7 +9,8 @@ export async function requestApi(
   const token = context.cookies.get("access_token")?.value;
 
   const headers = {
-    "Content-Type": "application/json",
+    // "Content-Type": "application/json",
+    cookie: context.request.headers.get("cookie") ?? "",
     ...(token && { Authorization: `Bearer ${token}` }),
     ...(options.headers || {}),
   };

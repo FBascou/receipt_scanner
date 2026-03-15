@@ -3,30 +3,18 @@ import { getRegisterService } from "../services/getRegisterService";
 import type { RegisterPostType } from "../types/authTypes";
 
 export async function getRegisterAction(data: RegisterPostType, Astro: AstroGlobal) {
-  const [error, response] = await getRegisterService(Astro, data);
-  console.log("error", error);
+  const [error, _] = await getRegisterService(Astro, data);
 
   if (!error) {
-    // Astro.cookies.set("access_token", response.access_token, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "lax",
-    //   path: "/",
-    // });
-
     return Astro.redirect("/login");
   }
 
   const reason = error.reason;
-  const detail = error?.details.detail;
-  console.log("getRegisterAction detail", detail);
   switch (reason) {
     case "InvalidData":
-      return { message: "Register failed", details: detail };
+      return { message: "Registration failed", details: error?.details?.detail };
     case "Unauthorized":
-      return { message: "Invalid credentials", details: detail };
-    // case "Unauthenticated":
-    //   return Astro.redirect("/register");
+      return { message: "Invalid credentials", details: error?.details?.detail };
     case "Unexpected":
       return { message: "Unexpected error" };
     default:

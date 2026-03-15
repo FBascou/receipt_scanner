@@ -1,25 +1,23 @@
 ---
 import { getRegisterAction } from "../features/auth/actions/getRegisterAction";
 import FormRegister from "../features/auth/components/FormRegister.astro";
-import type { RegisterPostType } from "../features/auth/types/authTypes";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
+import type { RegisterPostType } from "../features/auth/types/authTypes";
 
 export const prerender = false;
 
+let errorMessage: string | null = null;
 let values: RegisterPostType = {
   email: "",
   password: "",
   confirm: "",
 };
 
-let errorMessage: string | null = null;
-
 if (Astro.request.method === "POST") {
   values = Object.fromEntries(await Astro.request.formData()) as RegisterPostType;
 
   const result = await getRegisterAction(values, Astro);
-  console.log("result", result);
 
   if (result instanceof Response) {
     return result;

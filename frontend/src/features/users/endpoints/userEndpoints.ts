@@ -1,3 +1,3 @@
 export const USER_ENDPOINTS = {
-  me: "/users/me",
+  me: "/v1/users/me",
 };

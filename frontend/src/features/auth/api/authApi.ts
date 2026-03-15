@@ -26,7 +26,6 @@ export async function postRegister(context: APIContext, data: RegisterPostType) 
   });
 
   const json = await response.json();
-  console.log("postREgister json", json.detail);
 
   if (!response.ok) {
     // return err({ reason: "Unauthorized", details: json });

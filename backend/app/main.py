@@ -41,13 +41,14 @@ app.add_exception_handler(
 
 # FOR DEBUGGING ONLY
 from app.db.session import SessionLocal
-from app.db.models import Receipt, ReceiptJob
+from app.db.models import Receipt, ReceiptJob, User
 
 @app.get("/debug/receipts")
 def debug_receipts():
     db = SessionLocal()
     receipt_count = db.query(Receipt).count()
     job_count = db.query(ReceiptJob).count()
+    user_list = db.query(User).all()
     db.close()
-    return {"receipt_count": receipt_count, "job_count": job_count}
+    return {"receipt_count": receipt_count, "job_count": job_count, "user_list": user_list}
 

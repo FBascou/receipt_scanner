@@ -3,29 +3,32 @@ import { getLoginAction } from "../features/auth/actions/getLoginAction";
 import FormLogin from "../features/auth/components/FormLogin.astro";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
+import type { LoginPostType } from "../features/auth/types/authTypes";
 
 export const prerender = false;
 
 let errorMessage: string | null = null;
+let values: LoginPostType = {
+  email: "",
+  password: "",
+};
 
 if (Astro.request.method === "POST") {
-  const formData = await Astro.request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const data = { email: String(email), password: String(password) };
-  const result = await getLoginAction(data, Astro);
+  values = Object.fromEntries(await Astro.request.formData()) as LoginPostType;
+
+  const result = await getLoginAction(values, Astro);
 
   if (result instanceof Response) {
     return result;
   }
 
-  errorMessage = result?.message ?? null;
+  errorMessage = result?.details?.error?.message ?? result?.message ?? null;
 }
 ---
 
 <Layout title="Login">
   <h1>Login</h1>
   <Section>
-    <FormLogin errorMessage={errorMessage} />
+    <FormLogin errorMessage={errorMessage} values={values} />
   </Section>
 </Layout>

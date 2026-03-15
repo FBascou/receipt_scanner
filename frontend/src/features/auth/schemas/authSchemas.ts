@@ -1,19 +1,19 @@
-import z from "zod";
+import { z } from "zod";
 
 const PasswordSchema = z
   .string()
   .min(8, { message: "Password should have a minimum of 8 characters" })
   // .max(20, { message: maxLengthErrorMessage })
-  .refine((password) => /[A-Z]/.test(password), {
+  .refine((password: string) => /[A-Z]/.test(password), {
     message: "Password should have at least one uppercase character",
   })
-  .refine((password) => /[a-z]/.test(password), {
+  .refine((password: string) => /[a-z]/.test(password), {
     message: "Password should have at least one lowercase character",
   })
-  .refine((password) => /[0-9]/.test(password), {
+  .refine((password: string) => /[0-9]/.test(password), {
     message: "Password should have at least one number",
   })
-  .refine((password) => /[#?!@$%^&*-]/.test(password), {
+  .refine((password: string) => /[#?!@$%^&*-]/.test(password), {
     message: "Password should have at least one special character: #?!@$%^&*-",
   });
 
@@ -28,7 +28,7 @@ export const RegisterSchema = z
     password: PasswordSchema,
     confirm: z.string().min(1, { error: "Password cannot be empty" }),
   })
-  .refine((data) => data.password === data.confirm, {
+  .refine((data: any) => data.password === data.confirm, {
     message: "Passwords don't match",
     path: ["confirm"],
     // when(payload) {

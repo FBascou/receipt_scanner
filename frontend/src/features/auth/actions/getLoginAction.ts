@@ -22,8 +22,6 @@ export async function getLoginAction(data: LoginPostType, Astro: AstroGlobal) {
       return { message: "Login failed", details: error.details };
     case "Unauthorized":
       return { message: "Invalid credentials, wrong email and/or password" };
-    // case "Unauthenticated":
-    //   return Astro.redirect("/login");
     case "Unexpected":
       return { message: "Unexpected error" };
     default:

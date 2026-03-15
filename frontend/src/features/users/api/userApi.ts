@@ -1,7 +1,7 @@
 import type { APIContext } from "astro";
 import { requestApi } from "../../../lib/requestApi";
 import { err, ok } from "../../../lib/requestResult";
-import { USER_ENDPOINTS } from "../endpoints/endpointUsers";
+import { USER_ENDPOINTS } from "../endpoints/userEndpoints";
 
 export async function getUser(context: APIContext) {
   const response = await requestApi(context, USER_ENDPOINTS.me, {

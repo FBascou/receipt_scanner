@@ -1,4 +1,4 @@
-import type z from "zod";
+import z from "zod";
 import type { LoginSchema, RegisterResponseSchema, RegisterSchema } from "../schemas/authSchemas";
 
 export type LoginSchemaType = z.infer<typeof LoginSchema>;
@@ -21,3 +21,7 @@ export type RegisterSchemaFlattenedErrorsType =
   | { fieldErrors?: Record<string, string[]> };
 
 export type RegisterResponseSchemaType = z.infer<typeof RegisterResponseSchema>;
+
+export type SchemaFlattenedErrorsType<T> =
+  | z.core.$ZodFlattenedError<T, { message: string; errorCode: string }>
+  | { fieldErrors?: Record<string, string[]> };

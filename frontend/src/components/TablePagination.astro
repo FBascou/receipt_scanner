@@ -15,7 +15,7 @@ const { pagination } = Astro.props;
 const { total, page_size, current_page } = pagination;
 // const totalPages = 20;
 const totalPages = Math.ceil(total / page_size);
-const pageSizeList = [2, 5, 10, 15, 20, 50];
+const pageSizeList = [5, 10, 15, 20, 50];
 const previousPages = current_page > 2 ? current_page - 3 : 0;
 const nextPages = current_page > 0 ? current_page + 2 : 0;
 ---

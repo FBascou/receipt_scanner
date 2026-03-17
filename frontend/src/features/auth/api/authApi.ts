@@ -6,6 +6,9 @@ import type { APIContext } from "astro";
 
 export async function postLogin(context: APIContext, data: LoginPostType) {
   const response = await requestApi(context, AUTH_ENDPOINTS.login, {
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -21,6 +24,9 @@ export async function postLogin(context: APIContext, data: LoginPostType) {
 
 export async function postRegister(context: APIContext, data: RegisterPostType) {
   const response = await requestApi(context, AUTH_ENDPOINTS.register, {
+    headers: {
+      "Content-Type": "application/json",
+    },
     method: "POST",
     body: JSON.stringify(data),
   });

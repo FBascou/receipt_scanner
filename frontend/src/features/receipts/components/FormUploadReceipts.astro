@@ -1,11 +1,10 @@
 ---
 import Button from "../../../components/Button.astro";
+import type { ScanBatchPostType } from "../types/receiptTypes";
 
 type Props = {
   errorMessage: string | null;
-  values: {
-    files: string[];
-  };
+  values: ScanBatchPostType;
 };
 
 const { errorMessage, values } = Astro.props;
@@ -22,7 +21,7 @@ const { errorMessage, values } = Astro.props;
         id="files"
         multiple
         accept=".jpg, .jpeg, .png"
-        value={values.files}
+        value={values.files as unknown as string[]}
       />
       <p class="message-error" id="files-error"></p>
     </div>

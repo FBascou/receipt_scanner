@@ -31,6 +31,11 @@ export async function postScanBatch(context: APIContext, data: ScanBatchSchemaTy
   const response = await requestApi(context, RECEIPT_ENDPOINTS.scanBatch, {
     method: "POST",
     body: formData,
+    headers: {
+      // backend uses cookies????
+      // cookie: context.request.headers.get("cookie") ?? "",
+      // "Content-Type": "multipart/form-data",
+    },
     // credentials: "include", // CHECK HOW TO IMPLEMENT THIS
   });
 

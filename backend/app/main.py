@@ -39,16 +39,25 @@ app.add_exception_handler(
 )
 
 
-# FOR DEBUGGING ONLY
-from app.db.session import SessionLocal
-from app.db.models import Receipt, ReceiptJob, User
+# UNCOMMENT FOR DEBUGGING ONLY
+# from app.db.session import SessionLocal
+# from app.db.models import Device, Receipt, ReceiptJob, User
 
-@app.get("/debug/receipts")
-def debug_receipts():
-    db = SessionLocal()
-    receipt_count = db.query(Receipt).count()
-    job_count = db.query(ReceiptJob).count()
-    user_list = db.query(User).all()
-    db.close()
-    return {"receipt_count": receipt_count, "job_count": job_count, "user_list": user_list}
+# @app.get("/debug/receipts")
+# def debug_receipts():
+#     db = SessionLocal()
+#     devices = db.query(Device).count()
+#     job_count = db.query(ReceiptJob).count()
+#     receipt_count = db.query(Receipt).count()
+#     receipt_amount = db.query(func.sum(Receipt.total).label("receipt_amount"))
+
+#     # return UserOverviewResponse(
+#     #     devices=devices or 0,
+#     #     job_count=job_count or 0,
+#     #     receipt_count=receipt_count or 0,
+#     #     receipt_amount= receipt_amount or 0,
+#     # ) 
+#     user_list = db.query(User).all()
+#     db.close()
+#     return {"devices": devices, "receipt_count": receipt_count, "job_count": job_count, "user_list": user_list, "receipt_amount": receipt_amount}
 

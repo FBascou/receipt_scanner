@@ -16,3 +16,17 @@ export async function getUser(context: APIContext) {
 
   return ok(json);
 }
+
+export async function getUserOverview(context: APIContext) {
+  const response = await requestApi(context, USER_ENDPOINTS.overview, {
+    method: "GET",
+  });
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    return err({ reason: "Unauthorized", details: json });
+  }
+
+  return ok(json);
+}

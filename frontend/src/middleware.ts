@@ -15,7 +15,17 @@ const PUBLIC_ROUTES = ["/login", "/register", "/forgot-password"];
 // ];
 
 export const onRequest: MiddlewareHandler = defineMiddleware(async (context, next) => {
+  const path = context.url.pathname;
+
+  if (PUBLIC_ROUTES.includes(path)) {
+    return next();
+  }
+
   const token = context.cookies.get("access_token")?.value;
+
+  if (!token) {
+    return context.redirect("/login");
+  }
 
   let user: User | null = null;
 
@@ -30,16 +40,14 @@ export const onRequest: MiddlewareHandler = defineMiddleware(async (context, nex
 
   context.locals.user = user;
 
-  const path = context.url.pathname;
-
   const isPublic = PUBLIC_ROUTES.includes(path);
 
-  // 🚫 Not logged in trying to access protected page
+  // Not logged in trying to access protected page
   if (!isPublic && !user) {
     return context.redirect("/login");
   }
 
-  // 🔁 Logged in user going to login/register
+  // Logged in user going to login/register
   if (user && isPublic) {
     return context.redirect("/");
   }

@@ -14,7 +14,8 @@ let values: LoginPostType = {
 };
 
 if (Astro.request.method === "POST") {
-  values = Object.fromEntries(await Astro.request.formData()) as LoginPostType;
+  const data = await Astro.request.formData();
+  values = Object.fromEntries(data) as LoginPostType;
 
   const result = await getLoginAction(values, Astro);
 

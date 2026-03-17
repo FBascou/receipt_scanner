@@ -24,7 +24,17 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    jobs = relationship("ReceiptJob", back_populates="user")
+    jobs = relationship(
+        "ReceiptJob",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
+    devices = relationship(
+        "Device",
+        back_populates="user",
+        cascade="all, delete"
+    )
     
 class ReceiptJob(Base):
     __tablename__ = "receipt_jobs"
@@ -40,6 +50,10 @@ class ReceiptJob(Base):
     
     user = relationship("User", back_populates="jobs")
     receipts = relationship("Receipt", back_populates="job")
+    
+    __table_args__ = (
+        Index("idx_job_user_id", "user_id"),
+    )
     
 class Receipt(Base):
     __tablename__ = "receipts"
@@ -61,3 +75,21 @@ class Receipt(Base):
         Index("idx_receipt_total", "total"),
     )
     
+class Device(Base):
+    __tablename__ = "devices"
+
+    id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUIDType] = mapped_column( UUID(as_uuid=True),ForeignKey("users.id"),nullable=False)
+    mac: Mapped[str] = mapped_column(String)
+    ip: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)
+    )
+
+    user = relationship("User", back_populates="devices")
+
+    __table_args__ = (
+        Index("idx_device_user_id", "user_id"),
+    )

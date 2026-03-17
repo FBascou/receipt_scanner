@@ -34,3 +34,9 @@ class UserPasswordChange(BaseModel):
     @field_validator("new_password")
     def validate_new_password(cls, v: str):
         return validate_password_strength(v)
+    
+class UserOverviewResponse(BaseModel): 
+    devices: int
+    job_count: int
+    receipt_count: int
+    receipt_amount: float

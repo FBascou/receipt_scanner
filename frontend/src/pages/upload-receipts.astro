@@ -1,26 +1,21 @@
 ---
 import { getScanBatchAction } from "../features/receipts/actions/getScanBatchAction";
 import FormUploadReceipts from "../features/receipts/components/FormUploadReceipts.astro";
-import type {
-  ScanBatchPostType,
-  ScanBatchSchemaType,
-} from "../features/receipts/types/receiptTypes";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
+import type { ScanBatchPostType } from "../features/receipts/types/receiptTypes";
 
 export const prerender = false;
 
 let errorMessage: string | null = null;
-let values = {
+let values: ScanBatchPostType = {
   files: [],
 };
 
 if (Astro.request.method === "POST") {
   const data = await Astro.request.formData();
-  const fileList = data.getAll("files");
-  // values = Object.fromEntries(data);
-  values = { files: fileList }; //  FIX THIS
-  // console.log("values", values, files);
+  const fileList = data.getAll("files") as File[];
+  values = { files: fileList };
 
   const result = await getScanBatchAction(values, Astro);
 

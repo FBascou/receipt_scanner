@@ -1,5 +1,5 @@
 export const AUTH_ENDPOINTS = {
-  login: "/v1/auth/login",
-  register: "/v1/auth/register",
-  refresh: "/auth/refresh",
+  login: "/api/v1/auth/login",
+  register: "/api/v1/auth/register",
+  refresh: "/api/v1/auth/refresh",
 };

@@ -26,14 +26,19 @@ if (user) {
     // Create a postAddDevice
     // Something wrong with the total amount receipts
     result = await getUserOverview(Astro);
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+    result = error;
+  }
 }
+
+console.log(result);
 
 // If multiple devices connected, then receipts scanned in device 1, device n... receipt amount in device 1, device n...
 const overviewCards: CardType[] = [
   {
     id: 0,
-    title: "Devices connected",
+    title: "Devices online",
     value: result?.[1]?.devices ?? 0,
   },
   {
@@ -49,7 +54,7 @@ const overviewCards: CardType[] = [
   {
     id: 3,
     title: "Total receipt amount",
-    value: result?.[1]?.receipt_amount ?? 0,
+    value: result?.[1]?.receipt_amount.toFixed(2) ?? 0,
   },
 ];
 ---
@@ -59,7 +64,7 @@ const overviewCards: CardType[] = [
   <Section title="Overview">
     <CardList size="s" cardList={overviewCards} />
   </Section>
-  <Section title="Total sales" direction="row">
+  <Section title="Performance" direction="row">
     <ChartLine id="total-sales" />
     <ChartLine id="total-receipts" />
   </Section>

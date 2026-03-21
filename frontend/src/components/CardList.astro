@@ -17,9 +17,15 @@ interface Props {
 const { size, cardList } = Astro.props;
 ---
 
-<div class="card-list-container">
-  {cardList.map((card) => <Card size={size} card={card} />)}
-</div>
+<ul class="card-list-container">
+  {
+    cardList.map((card) => (
+      <li>
+        <Card size={size} card={card} />
+      </li>
+    ))
+  }
+</ul>
 
 <style>
   .card-list-container {

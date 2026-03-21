@@ -26,7 +26,7 @@ from app.core.router import APIRouterWithErrors
 # router = APIRouter(prefix="/jobs", tags=["jobs"])
 router = APIRouterWithErrors(prefix="/jobs", tags=["jobs"])
 
-@router.post("/upload", response_model=ReceiptJobResponse)
+@router.post("/", response_model=ReceiptJobResponse)
 async def upload_job(
     job_file: UploadFile,
     images: list[UploadFile],
@@ -85,10 +85,12 @@ def get_jobs(
         query = query.filter(ReceiptJob.uploaded_at <= date_to)
     
     if source is not None:
-        query = query.filter(ReceiptJob.source <= source)
+        # query = query.filter(ReceiptJob.source <= source)
+        query = query.filter(ReceiptJob.source == source)
         
     if status is not None:
-        query = query.filter(ReceiptJob.status <= status)
+        # query = query.filter(ReceiptJob.status <= status)
+        query = query.filter(ReceiptJob.status == status)
 
     if search:
         query = query.filter(ReceiptJob.raw_text.ilike(f"%{search}%"))
@@ -128,7 +130,7 @@ def get_jobs(
         total=total_count or 0,
         page=page,
         page_size=page_size,
-        items=job_responses,
+        list=job_responses,
     )  
 
 @router.get("/{job_id}", response_model=ReceiptJobResponse)
@@ -232,7 +234,7 @@ def get_job_receipts(
         items=receipt_responses,
     )
 
-@router.get("/{job_id}/download/pdf")
+@router.get("/{job_id}/pdf")
 def download_job_pdf(job_id: str, db: Session = Depends(get_db)):
     """
     Download all receipts in a job as a single PDF.
@@ -261,7 +263,7 @@ def download_job_pdf(job_id: str, db: Session = Depends(get_db)):
         headers={"Content-Disposition": f"attachment; filename={job_id}.pdf"},
     )
 
-@router.get("/{job_id}/download/json")
+@router.get("/{job_id}/json")
 def download_job_json(job_id: str, db: Session = Depends(get_db)):
     """
     Download job metadata (job.json) for a batch of receipts.
@@ -282,5 +284,5 @@ def download_job_json(job_id: str, db: Session = Depends(get_db)):
         headers={"Content-Disposition": f"attachment; filename={job_id}.json"},
     )
 
-# @router.get("/{job_id}/download/csv")
+# @router.get("/{job_id}/csv")
 # def download_job_csv(job_id: str, db: Session = Depends(get_db)):    

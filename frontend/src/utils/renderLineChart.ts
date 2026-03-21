@@ -14,8 +14,8 @@ export function renderLineChart<T>({
   data,
   x,
   y,
-  width = 700,
-  height = 400,
+  width = 300,
+  height = 200,
 }: LineChartOptions<T>) {
   const parseDate = d3.timeParse("%Y-%m-%d");
 
@@ -26,7 +26,7 @@ export function renderLineChart<T>({
     value: +y(d), // Important: coerce to number
   }));
 
-  const margin = { top: 20, right: 30, bottom: 40, left: 60 };
+  const margin = { top: 20, right: 20, bottom: 20, left: 40 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 

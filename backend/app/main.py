@@ -3,7 +3,6 @@ from fastapi.exceptions import RequestValidationError
 from app.core.error_handlers import validation_exception_handler
 from app.db.session import engine
 from app.db.base import Base
-# from app.api.v1 import auth, users, receipts, jobs
 from app.api.v1.router import api_router as api_v1
 
 # TODO: 
@@ -30,7 +29,7 @@ app = FastAPI(title="RecScan Receipt Scanner API")
 Base.metadata.create_all(bind=engine)
 
 # Register routers
-app.include_router(api_v1, prefix="/v1")
+app.include_router(api_v1, prefix="/api/v1")
 
 # Register validation errors
 app.add_exception_handler(

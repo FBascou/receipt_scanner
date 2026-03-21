@@ -32,7 +32,7 @@ const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
 const order = String(Astro.url.searchParams.get("order") ?? "desc");
 
 const res = await fetch(
-  `http://127.0.0.1:8000/v1/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`,
+  `http://127.0.0.1:8000/api/v1/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`,
 );
 
 const { items, total, page: current_page, page_size } = await res.json();
@@ -52,7 +52,7 @@ const headers: TableDataHeadersType = [
 const rows: TableDataRowsType[] = items;
 
 const handleFileDownload = (jobId: string, fileType: FileTypeEnum) => {
-  return `http://127.0.0.1:8000/v1/jobs/${jobId}/download/${fileType}`;
+  return `http://127.0.0.1:8000/api/v1/jobs/${jobId}/${fileType}`;
 };
 
 const pagination: TableDataPaginationType = { total, page_size, current_page };

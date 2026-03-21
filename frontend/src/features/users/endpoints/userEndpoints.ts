@@ -1,4 +1,4 @@
 export const USER_ENDPOINTS = {
-  me: "/v1/users/me",
-  overview: "/v1/users/overview",
+  me: "/api/v1/users/me",
+  overview: "/api/v1/users/overview",
 };

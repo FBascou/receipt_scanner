@@ -21,4 +21,4 @@ class PaginatedJobResponse(BaseModel):
     total: int
     page: int
     page_size: int
-    items: List[ReceiptJobResponse]
+    list: List[ReceiptJobResponse]

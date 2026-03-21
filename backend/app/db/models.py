@@ -24,23 +24,54 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+    devices = relationship(
+        "Device",
+        back_populates="user",
+        cascade="all, delete"
+    )
+
     jobs = relationship(
         "ReceiptJob",
         back_populates="user",
         cascade="all, delete"
     )
 
-    devices = relationship(
-        "Device",
-        back_populates="user",
+class Device(Base):
+    __tablename__ = "devices"
+
+    id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUIDType] = mapped_column( UUID(as_uuid=True),ForeignKey("users.id"),nullable=False)
+    name: Mapped[str] = mapped_column(String)
+    mac: Mapped[str] = mapped_column(String)
+    ip: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc)
+    )
+
+    user = relationship(
+        "User", 
+        back_populates="devices",
         cascade="all, delete"
     )
     
+    jobs = relationship(
+        "ReceiptJob",
+        back_populates="devices",
+        cascade="all, delete"
+    )
+
+    __table_args__ = (
+        Index("idx_device_user_id", "user_id"),
+    )
+
 class ReceiptJob(Base):
     __tablename__ = "receipt_jobs"
 
     id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
+    device_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("devices.id"))
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     source: Mapped[JobSource] = mapped_column(Enum(JobSource), default=JobSource.AUTOMATIC)
     image_count: Mapped[int] = mapped_column(Integer)
@@ -49,6 +80,7 @@ class ReceiptJob(Base):
     job_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     
     user = relationship("User", back_populates="jobs")
+    devices = relationship("Device", back_populates="jobs")
     receipts = relationship("Receipt", back_populates="job")
     
     __table_args__ = (
@@ -73,23 +105,4 @@ class Receipt(Base):
         Index("idx_receipt_job_id", "job_id"),
         Index("idx_receipt_created_at", "created_at"),
         Index("idx_receipt_total", "total"),
-    )
-    
-class Device(Base):
-    __tablename__ = "devices"
-
-    id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id: Mapped[UUIDType] = mapped_column( UUID(as_uuid=True),ForeignKey("users.id"),nullable=False)
-    mac: Mapped[str] = mapped_column(String)
-    ip: Mapped[str] = mapped_column(String)
-    status: Mapped[str] = mapped_column(String)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc)
-    )
-
-    user = relationship("User", back_populates="devices")
-
-    __table_args__ = (
-        Index("idx_device_user_id", "user_id"),
     )

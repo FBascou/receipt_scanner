@@ -1,18 +1,33 @@
 ---
+import ButtonLink from "../components/ButtonLink.astro";
+import CardList from "../components/CardList.astro";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
 
 export const prerender = false;
+
+const deviceList = [];
 ---
 
 <Layout title="Devices">
   <h1>Devices</h1>
+  {
+    !deviceList.length ? (
+      <div>
+        <p>There are no devices available</p>
+        <ButtonLink style="secondary" href="/devices/add" text="Add new device" />
+      </div>
+    ) : (
+      <CardList size="m" cardList={deviceList} />
+    )
+  }
   <Section title="Device 1">
     Status: Connected Connection: Stable Error: None ------ Experiencing issues? Restart device or
     Test Connection Serial number: Model: Software version: IP address:
   </Section>
   <Section title="Device 2">
-    Status: Connected Connection: Stable Error: None ------ Experiencing issues? Restart device or
-    Test Connection Serial number: Model: Software version: IP address:
+    Status: Connected Connection: Unstable Error: No connection available ------ Experiencing
+    issues? Restart device or Test Connection Serial number: Model: Software version: IP address:
+    Warning: Low battery
   </Section>
 </Layout>

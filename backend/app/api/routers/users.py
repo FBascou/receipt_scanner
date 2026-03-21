@@ -27,7 +27,7 @@ async def get_overview(db: Session = Depends(get_db), current_user: User = Depen
             select(func.count(Device.id))
             .where(Device.user_id == user_id)
             .scalar_subquery()
-            .label("devices"),
+            .label("device_count"),
 
             # jobs
             select(func.count(ReceiptJob.id))
@@ -55,7 +55,7 @@ async def get_overview(db: Session = Depends(get_db), current_user: User = Depen
     ).one()
 
     return UserOverviewResponse(
-        devices=result.devices,
+        devices=result.device_count,
         job_count=result.job_count,
         receipt_count=result.receipt_count,
         receipt_amount=result.receipt_amount,

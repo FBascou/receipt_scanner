@@ -40,3 +40,6 @@ class UserOverviewResponse(BaseModel):
     job_count: int
     receipt_count: int
     receipt_amount: float
+    
+    class Config:
+        from_attributes = True

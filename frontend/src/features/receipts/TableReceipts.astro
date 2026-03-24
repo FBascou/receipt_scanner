@@ -1,15 +1,16 @@
 ---
 import ButtonLink from "../../components/ButtonLink.astro";
 import TablePagination from "../../components/TablePagination.astro";
+import { requestApi } from "../../lib/requestApi";
 
 type TableDataHeadersType = string[];
 
 type TableDataRowsType = {
   id: string;
   uploaded_at: string;
-  idDevice: number;
+  device_id: string;
   image_count: number;
-  totalAmount: number;
+  total: number;
   source: string;
   status: string;
 };
@@ -31,11 +32,16 @@ const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
 const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
 const order = String(Astro.url.searchParams.get("order") ?? "desc");
 
-const res = await fetch(
-  `http://127.0.0.1:8000/api/v1/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`,
-);
+const url = `/api/v1/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
-const { items, total, page: current_page, page_size } = await res.json();
+const result = await requestApi(Astro, url, {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  method: "GET",
+});
+
+const { items, total, page: current_page, page_size } = await result.json();
 
 const caption = "List of all receipts scanned and uploaded";
 const headers: TableDataHeadersType = [
@@ -50,6 +56,7 @@ const headers: TableDataHeadersType = [
   "",
 ];
 const rows: TableDataRowsType[] = items;
+console.log("rows", rows);
 
 const handleFileDownload = (jobId: string, fileType: FileTypeEnum) => {
   return `http://127.0.0.1:8000/api/v1/jobs/${jobId}/${fileType}`;
@@ -79,9 +86,9 @@ const pagination: TableDataPaginationType = { total, page_size, current_page };
           <tr>
             <td>{index + 1}</td>
             <td>{new Date(row.uploaded_at).toLocaleString()}</td>
-            <td>{row.idDevice}</td>
+            <td>{row.device_id ?? "N/A"}</td>
             <td>{row.image_count}</td>
-            <td>{row.totalAmount}</td>
+            <td>{row.total}</td>
             <td>{row.source}</td>
             <td>{row.status}</td>
             <td>

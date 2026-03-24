@@ -9,7 +9,7 @@ from sqlalchemy.orm import InstrumentedAttribute, Session, selectinload
 from PIL import Image
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
-from app.db.models import JobSource, JobStatus, Receipt, ReceiptJob, User
+from app.db.models import JobUploadSource, JobStatus, Receipt, ReceiptJob, User
 from app.schemas.receipt import PaginatedReceiptResponse, ReceiptResponse
 from app.schemas.receipt_job import PaginatedJobResponse, ReceiptJobResponse
 from app.services.file_service import generate_pdf_from_images
@@ -46,7 +46,7 @@ async def upload_job(
 @router.get("/", response_model=PaginatedJobResponse)
 def get_jobs(
     db: Session = Depends(get_db),
-
+    current_user: User = Depends(get_current_user),
     # Pagination
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -56,7 +56,7 @@ def get_jobs(
     max_image_count: int | None = None,
     date_from: datetime | None = None,
     date_to: datetime | None = None,
-    source: JobSource | None = None,
+    source: JobUploadSource | None = None,
     status: JobStatus | None = None,
 
     # Sorting
@@ -70,7 +70,7 @@ def get_jobs(
     Return array of jobs with filtering, pagination, sorting and search. 
     """
     
-    query = db.query(ReceiptJob)
+    query = db.query(ReceiptJob).filter(ReceiptJob.user_id == current_user.id)
 
     if min_image_count is not None:
         query = query.filter(ReceiptJob.image_count >= min_image_count)
@@ -130,7 +130,7 @@ def get_jobs(
         total=total_count or 0,
         page=page,
         page_size=page_size,
-        list=job_responses,
+        items=job_responses,
     )  
 
 @router.get("/{job_id}", response_model=ReceiptJobResponse)

@@ -2,15 +2,17 @@ from typing import List
 from uuid import UUID
 from pydantic import BaseModel
 from datetime import datetime
-from app.schemas.enums import JobSource, JobStatus
+from app.schemas.enums import JobUploadSource, JobStatus
 
 class ReceiptJobCreate(BaseModel):
-    source: JobSource
+    source: JobUploadSource
   
 class ReceiptJobResponse(BaseModel):
     id: UUID
+    # device_id
+    # total_amount
     uploaded_at: datetime
-    source: JobSource
+    source: JobUploadSource
     image_count: int
     status: JobStatus
 
@@ -18,7 +20,8 @@ class ReceiptJobResponse(BaseModel):
         from_attributes = True
 
 class PaginatedJobResponse(BaseModel):
+    # total_pages
     total: int
     page: int
     page_size: int
-    list: List[ReceiptJobResponse]
+    items: List[ReceiptJobResponse]

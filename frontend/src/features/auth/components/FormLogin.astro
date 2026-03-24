@@ -23,7 +23,7 @@ const { errorMessage, values } = Astro.props;
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" value={values.password} />
+      <input type="password" id="password" name="password" value={values?.password} />
       <button type="button" id="password-button">O</button>
       <p class="message-error" id="password-error"></p>
     </div>

@@ -1,0 +1,88 @@
+---
+import Button from "../../../components/Button.astro";
+
+type Props = {
+  errorMessage: string | null;
+  values: {
+    user_id: string;
+    name: string;
+    mac: string;
+    ip: string;
+  };
+};
+
+const user = Astro.locals.user;
+
+const { errorMessage, values } = Astro.props;
+---
+
+<form method="POST">
+  <fieldset name="form-add-device">
+    <legend>Add device schema form</legend>
+    <div class="form-group">
+      <label for="user_id">Device name</label>
+      <input type="text" id="user_id" name="user_id" value={user?.id ?? values?.user_id} />
+      <p class="message-error" id="user_id-error"></p>
+    </div>
+    <div class="form-group">
+      <label for="name">Device name</label>
+      <input type="text" id="name" name="name" value={values?.name} />
+      <p class="message-error" id="name-error"></p>
+    </div>
+    <div class="form-group">
+      <label for="mac">Mac address</label>
+      <input type="text" id="mac" name="mac" value={values?.mac} />
+      <p class="message-error" id="mac-error"></p>
+    </div>
+    <div class="form-group">
+      <label for="ip">IP address</label>
+      <input type="text" id="ip" name="ip" value={values?.ip} />
+      <p class="message-error" id="ip-error"></p>
+    </div>
+    <div class="form-group">
+      <Button text="Add device" type="submit" />
+      {
+        errorMessage ? (
+          <p class="message-error" id="form-error">
+            {errorMessage}
+          </p>
+        ) : null
+      }
+    </div>
+  </fieldset>
+</form>
+
+<script>
+  import { handleForm } from "../../../utils/utils";
+  import { DeviceAddSchema } from "../schemas/deviceSchemas";
+
+  const form = document.querySelector("form");
+
+  if (form instanceof HTMLFormElement) {
+    handleForm(form, DeviceAddSchema);
+  }
+</script>
+
+<style>
+  form {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  legend {
+    visibility: hidden;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid black;
+  }
+</style>

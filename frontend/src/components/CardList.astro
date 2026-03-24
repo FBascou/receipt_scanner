@@ -29,9 +29,8 @@ const { size, cardList } = Astro.props;
 
 <style>
   .card-list-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: 3rem;
   }
 </style>

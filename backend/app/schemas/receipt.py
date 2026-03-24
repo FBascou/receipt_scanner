@@ -44,3 +44,6 @@ class PaginatedReceiptResponse(BaseModel):
     page: int
     page_size: int
     items: List[ReceiptResponse]
+    
+    class Config:
+        from_attributes = True

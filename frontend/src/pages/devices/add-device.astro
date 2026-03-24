@@ -1,0 +1,46 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import FormAddDevice from "../../features/devices/components/FormAddDevice.astro";
+import { requireUser } from "../../lib/auth/requireUser";
+import { requestApi } from "../../lib/requestApi";
+import type { DeviceAddSchemaType } from "../../features/devices/types/deviceTypes";
+
+const user = requireUser(Astro);
+// console.log(user);
+
+let errorMessage: string | null = null;
+let values: DeviceAddSchemaType = {
+  user_id: "",
+  name: "",
+  mac: "",
+  ip: "",
+};
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+  values = Object.fromEntries(data) as DeviceAddSchemaType;
+
+  // const result = await getLoginAction(values, Astro);
+
+  const result = await requestApi(Astro, "/api/v1/devices/", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(values),
+  });
+
+  const json = await result.json();
+
+  if (!result.ok) {
+    errorMessage = result?.details?.error?.message ?? result?.message ?? null;
+  }
+
+  console.log(json);
+}
+---
+
+<Layout title="Add device">
+  <h1>Add Device</h1>
+  <FormAddDevice errorMessage={errorMessage} values={values} />
+</Layout>

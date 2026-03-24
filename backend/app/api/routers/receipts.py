@@ -1,11 +1,11 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, List
-from uuid import uuid4
-from fastapi import  Depends, File, UploadFile
+from uuid import UUID, uuid4
+from fastapi import  Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
-from app.db.models import JobSource, JobStatus, Receipt, ReceiptJob, User
+from app.db.models import JobUploadSource, JobStatus, Receipt, ReceiptJob, User
 from app.services.ocr_service import process_image
 from app.services.parser import sanitize_ocr_date
 from app.schemas.receipt import ReceiptResponse
@@ -25,6 +25,7 @@ async def scan_receipt(
     file: UploadFile,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    device_id: UUID | None = None
 ):
     """
     Scan single receipt image.
@@ -33,6 +34,20 @@ async def scan_receipt(
       - Job metadata JSON
       - Optional image URLs
     """
+    
+    if device_id is None:
+        # manual upload
+        source = JobUploadSource.MANUAL
+    else:
+        source = JobUploadSource.AUTOMATIC
+    #  source = ( JobUploadSource.AUTOMATIC if device_id else JobUploadSource.MANUAL)
+    
+    idDevice = "N/A" if device_id else device_id
+    
+    # This should go in APIRouterWithErrors
+    if source == JobUploadSource.AUTOMATIC and not device_id:
+        raise HTTPException(400, "Device required for automatic jobs")
+    
     # Read uploaded file
     image_bytes = await file.read()
 
@@ -50,8 +65,10 @@ async def scan_receipt(
         job = ReceiptJob(
             id=uuid4(),
             user_id=current_user.id,
+            # device_id=device_id,
+            device_id=idDevice,
             status=JobStatus.PENDING,
-            source=JobSource.AUTOMATIC,
+            source=source,
             uploaded_at=datetime.now(timezone.utc),
             image_count=1,  # First image
         )
@@ -90,6 +107,7 @@ async def scan_receipts(
     files: List[UploadFile] = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    device_id: UUID | None = None
 ):
     """
     Scan multiple receipt images in one job.
@@ -99,12 +117,19 @@ async def scan_receipts(
       - Optional image URLs
     """
 
+    source = (JobUploadSource.AUTOMATIC if device_id else JobUploadSource.MANUAL)
+    
+    # This should go in APIRouterWithErrors
+    if source == JobUploadSource.AUTOMATIC and not device_id:
+        raise HTTPException(400, "Device required for automatic jobs")
+
     # Create a new ReceiptJob for this batch
     job = ReceiptJob(
         id=uuid4(),
         user_id=current_user.id,
+        device_id=device_id,
         status=JobStatus.PENDING,
-        source=JobSource.AUTOMATIC,
+        source=source,
         uploaded_at=datetime.now(timezone.utc),
         image_count=len(files),
     )

@@ -6,6 +6,6 @@ class JobStatus(str, Enum):
     FAILED = "FAILED"
 
 
-class JobSource(str, Enum):
-    MANUAL = "manual_upload"
-    AUTOMATIC = "automatic_upload"
+class JobUploadSource(str, Enum):
+    MANUAL = "MANUAL"
+    AUTOMATIC = "AUTOMATIC"

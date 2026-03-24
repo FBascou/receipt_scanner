@@ -12,9 +12,9 @@ class JobStatus(str, PyEnum):
     PROCESSED = "PROCESSED"
     FAILED = "FAILED"
 
-class JobSource(str, PyEnum):
-    MANUAL = "manual_upload"
-    AUTOMATIC = "automatic_upload"
+class JobUploadSource(str, PyEnum):
+    MANUAL = "MANUAL"
+    AUTOMATIC = "AUTOMATIC"
 
 class User(Base):
     __tablename__ = "users"
@@ -50,17 +50,8 @@ class Device(Base):
         default=lambda: datetime.now(timezone.utc)
     )
 
-    user = relationship(
-        "User", 
-        back_populates="devices",
-        cascade="all, delete"
-    )
-    
-    jobs = relationship(
-        "ReceiptJob",
-        back_populates="devices",
-        cascade="all, delete"
-    )
+    user = relationship("User", back_populates="devices")
+    jobs = relationship("ReceiptJob", back_populates="device")
 
     __table_args__ = (
         Index("idx_device_user_id", "user_id"),
@@ -71,16 +62,15 @@ class ReceiptJob(Base):
 
     id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
-    device_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("devices.id"))
+    device_id: Mapped[UUIDType | None] = mapped_column( UUID(as_uuid=True), ForeignKey("devices.id"), nullable=True)
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    source: Mapped[JobSource] = mapped_column(Enum(JobSource), default=JobSource.AUTOMATIC)
+    source: Mapped[JobUploadSource] = mapped_column(Enum(JobUploadSource), default=JobUploadSource.AUTOMATIC)
     image_count: Mapped[int] = mapped_column(Integer)
     status: Mapped[JobStatus] = mapped_column(Enum(JobStatus), default=JobStatus.PENDING)
-
     job_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     
     user = relationship("User", back_populates="jobs")
-    devices = relationship("Device", back_populates="jobs")
+    device = relationship("Device", back_populates="jobs")
     receipts = relationship("Receipt", back_populates="job")
     
     __table_args__ = (

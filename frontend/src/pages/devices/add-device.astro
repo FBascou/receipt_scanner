@@ -7,9 +7,8 @@ import { getDeviceAction } from "../../features/devices/actions/getDeviceAction"
 
 const user = requireUser(Astro);
 
-let errorMessage: string | null = null;
+let response: { message: string; code: string } | null = null;
 let values: DeviceAddSchemaType = {
-  user_id: user.id,
   name: "",
   mac: "",
   ip: "",
@@ -19,13 +18,13 @@ if (Astro.request.method === "POST") {
   const data = await Astro.request.formData();
   values = Object.fromEntries(data) as DeviceAddSchemaType;
 
-  const result = await getDeviceAction(values, Astro);
+  const result = await getDeviceAction({ user_id: user.id, ...values }, Astro);
 
   if (result instanceof Response) {
     return result;
   }
 
-  errorMessage = result?.message ?? null;
+  response = { message: result.message, code: result.code };
   console.log(result);
 }
 
@@ -37,5 +36,5 @@ if (Astro.request.method === "POST") {
 
 <Layout title="Add device">
   <h1>Add Device</h1>
-  <FormAddDevice errorMessage={errorMessage} values={values} />
+  <FormAddDevice response={response} values={values} />
 </Layout>

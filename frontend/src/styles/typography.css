@@ -43,3 +43,10 @@ span {
   font-size: var(--p-error);
   font-weight: initial;
 }
+
+.message-success {
+  height: 2rem;
+  color: var(--clr-success);
+  font-size: var(--p-success);
+  font-weight: initial;
+}

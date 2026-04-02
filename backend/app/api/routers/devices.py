@@ -24,8 +24,10 @@ async def add_device(
   Pair a new device with an existing user
   """
   existing_device = db.query(Device).filter(
+    Device.user_id == current_user.id,
+    Device.name == device_data.name,
     Device.mac == device_data.mac,
-    Device.user_id == current_user.id
+    Device.ip == device_data.ip,
   ).first()
 
   if existing_device:

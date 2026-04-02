@@ -15,7 +15,7 @@ export async function getDeviceAction(data: DevicePostType, Astro: AstroGlobal) 
 
   return {
     message: result.error?.message ?? "Device call failed",
-    code: result.error?.code,
+    code: result.error?.code ?? "ERROR",
     field: result.error?.field,
   };
 }

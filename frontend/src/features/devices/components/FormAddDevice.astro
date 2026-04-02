@@ -1,27 +1,18 @@
 ---
 import Button from "../../../components/Button.astro";
+import type { DeviceAddSchemaType } from "../types/deviceTypes";
 
 type Props = {
-  errorMessage: string | null;
-  values: {
-    user_id: string;
-    name: string;
-    mac: string;
-    ip: string;
-  };
+  response: { message: string; code: string } | null;
+  values: DeviceAddSchemaType;
 };
 
-const { errorMessage, values } = Astro.props;
+const { response, values } = Astro.props;
 ---
 
 <form method="POST">
   <fieldset name="form-add-device">
     <legend>Add device schema form</legend>
-    <!-- <div class="form-group">
-      <label for="user_id">Device name</label>
-      <input type="text" id="user_id" name="user_id" value={values?.user_id} />
-      <p class="message-error" id="user_id-error"></p>
-    </div> -->
     <div class="form-group">
       <label for="name">Device name</label>
       <input type="text" id="name" name="name" value={values?.name} />
@@ -40,9 +31,12 @@ const { errorMessage, values } = Astro.props;
     <div class="form-group">
       <Button text="Add device" type="submit" />
       {
-        errorMessage ? (
-          <p class="message-error" id="form-error">
-            {errorMessage}
+        response ? (
+          <p
+            class={response.code === "SUCCESS" ? "message-success" : "message-error"}
+            id="form-error"
+          >
+            {response.message}
           </p>
         ) : null
       }

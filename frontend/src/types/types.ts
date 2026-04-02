@@ -15,3 +15,19 @@ export type FiltersType = {
   order: FiltersOrderType;
   search: FiltersSearchType;
 };
+
+export type ApiErrorType = {
+  code?: string;
+  message: string;
+  field?: string;
+  details?: any;
+};
+
+// export type ServiceResultType<T> = {
+//   data?: T;
+//   error?: ApiErrorType;
+// };
+
+export type ServiceResultType<T> =
+  | { data: T; error?: never; status: number }
+  | { data?: never; error: ApiErrorType; status: number };

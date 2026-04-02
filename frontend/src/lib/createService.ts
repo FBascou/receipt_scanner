@@ -1,31 +1,39 @@
 import type { APIContext } from "astro";
-import { err } from "./requestResult";
+import type { ServiceResultType } from "../types/types";
 
-export function createService<Input, Parsed, Output, ErrorType>(
+// validation + safety
+export function createService<Input, Parsed, Output>(
   schema: {
-    safeParse: (data: Input) => {
-      success: boolean;
-      data?: Parsed;
-      error?: unknown;
-    };
+    safeParse: (data: Input) => { success: boolean; data?: Parsed; error?: any };
   },
-  handler: (context: APIContext, data: Parsed) => Promise<[ErrorType, null] | [null, Output]>,
+  handler: (context: APIContext, data: Parsed) => Promise<ServiceResultType<Output>>,
 ) {
-  return async function service(context: APIContext, data: Input) {
+  return async function service(
+    context: APIContext,
+    data: Input,
+  ): Promise<ServiceResultType<Output>> {
     const parsed = schema.safeParse(data);
-    console.log("createService parse", { data, parsed, parsedData: parsed.data?.files });
 
-    if (!parsed.success) {
-      return err({
-        reason: "InvalidData",
-        details: parsed.error,
-      });
+    if (!parsed.success || !parsed.data) {
+      return {
+        error: {
+          code: "INVALID_DATA",
+          message: "Invalid input",
+          details: parsed.error,
+        },
+      };
     }
 
     try {
-      return await handler(context, parsed.data as Parsed);
-    } catch {
-      return err({ reason: "Unexpected" });
+      return await handler(context, parsed.data);
+    } catch (error) {
+      return {
+        error: {
+          code: "UNEXPECTED",
+          message: "Something went wrong, please try again",
+          details: error,
+        },
+      };
     }
   };
 }

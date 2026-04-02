@@ -1,6 +1,6 @@
 
 from typing import List, cast
-from fastapi import Depends, HTTPException, Query
+from fastapi import Depends, Query
 from sqlalchemy.orm import Session
 from datetime import datetime
 from uuid import UUID
@@ -9,6 +9,8 @@ from app.schemas.device import DeviceCreate, DeviceResponse, PaginatedDeviceResp
 from app.api.dependencies import get_current_user
 from app.db.models import Device, User
 from app.db.session import get_db
+from app.core.exceptions import DeviceAlreadyRegistered, DeviceInvalidIp, DeviceInvalidMac, DeviceInvalidName, DeviceNotFound
+from app.core.error_handlers import verify_device_ip, verify_device_mac
 
 router = APIRouterWithErrors(prefix="/devices", tags=["devices"])
 
@@ -21,12 +23,32 @@ async def add_device(
   """
   Pair a new device with an existing user
   """
+  existing_device = db.query(Device).filter(
+    Device.mac == device_data.mac,
+    Device.user_id == current_user.id
+  ).first()
+
+  if existing_device:
+    raise DeviceAlreadyRegistered()
+  
+  if type(device_data.name) != str:
+    raise DeviceInvalidName()
+  
+  if not verify_device_mac(device_data.mac): 
+    raise DeviceInvalidMac()
+  
+  if not verify_device_ip(device_data.ip): 
+    raise DeviceInvalidIp()
+
+  # raise DeviceInvalid()
+  
   device = Device(
-      user_id=current_user.id,
-      name=device_data.name,
-      mac=device_data.mac,
-      ip=device_data.ip,
-      status="online",
+    user_id=current_user.id,
+    # id=device_data.id,
+    name=device_data.name,
+    mac=device_data.mac,
+    ip=device_data.ip,
+    status="online",
   )
 
   db.add(device)
@@ -93,12 +115,12 @@ async def get_device(
     current_user: User = Depends(get_current_user),
 ):
     device = db.query(Device).filter(
-        Device.id == id,
-        Device.user_id == current_user.id
+      Device.id == id,
+      Device.user_id == current_user.id
     ).first()
 
     if not device:
-        raise HTTPException(status_code=404, detail="Device not found")
+      raise DeviceNotFound()
 
     return device
 
@@ -116,4 +138,8 @@ async def send_device_status(device_data: DeviceCreate):
 
 @router.get("/status", response_model=DeviceResponse)
 async def get_device_status(device_data: DeviceCreate):
+  return
+
+@router.post("/calibrate", response_model=DeviceResponse)
+async def calibrate_device(device_data: DeviceCreate):
   return

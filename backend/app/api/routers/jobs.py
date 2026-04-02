@@ -15,6 +15,7 @@ from app.schemas.receipt_job import PaginatedJobResponse, ReceiptJobResponse
 from app.services.file_service import generate_pdf_from_images
 from app.services.job_service import process_receipt_job
 from app.core.router import APIRouterWithErrors
+from app.core.exceptions import JobInvalidId, JobNotFound
 
 # TODO:
 # Add pagination to job receipts
@@ -138,7 +139,7 @@ def get_job(job_id: str, db: Session = Depends(get_db)):
     try:
         job_uuid = UUID(job_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid job ID")
+        raise JobInvalidId()
 
     job = (
         db.query(ReceiptJob)
@@ -148,7 +149,7 @@ def get_job(job_id: str, db: Session = Depends(get_db)):
     )
 
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise JobNotFound()
 
     return job
 
@@ -242,7 +243,7 @@ def download_job_pdf(job_id: str, db: Session = Depends(get_db)):
     try:
         job_uuid = UUID(job_id)  # ensures proper UUID type
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid job ID")
+        raise JobInvalidId()
 
     receipts: List[Receipt] = db.query(Receipt).filter(Receipt.job_id == job_uuid).all()
 

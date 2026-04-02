@@ -1,4 +1,4 @@
-import { err, ok } from "../../../lib/requestResult";
+import { toServiceResult } from "../../../lib/requestResult";
 import { requestApi } from "../../../lib/requestApi";
 import { RECEIPT_ENDPOINTS } from "../endpoints/receiptEndpoints";
 import type { APIContext } from "astro";
@@ -8,17 +8,11 @@ export async function getJobs(
   context: APIContext,
   filterParams: string = "?page=1&page_size=20&sort_by=uploaded_at&order=desc",
 ) {
-  const response = await requestApi(context, `${RECEIPT_ENDPOINTS.jobs}/${filterParams}`, {
+  const result = await requestApi(context, `${RECEIPT_ENDPOINTS.jobs}/${filterParams}`, {
     method: "GET",
   });
 
-  const json = await response.json();
-
-  if (!response.ok) {
-    return err({ reason: "Unauthorized", details: json });
-  }
-
-  return ok(json);
+  return toServiceResult(result);
 }
 
 export async function postScanBatch(context: APIContext, data: ScanBatchSchemaType) {
@@ -28,7 +22,7 @@ export async function postScanBatch(context: APIContext, data: ScanBatchSchemaTy
     formData.append("files", file);
   });
 
-  const response = await requestApi(context, RECEIPT_ENDPOINTS.scanBatch, {
+  const result = await requestApi(context, RECEIPT_ENDPOINTS.scanBatch, {
     method: "POST",
     body: formData,
     headers: {
@@ -39,13 +33,5 @@ export async function postScanBatch(context: APIContext, data: ScanBatchSchemaTy
     // credentials: "include", // CHECK HOW TO IMPLEMENT THIS
   });
 
-  console.log("postScanBatch response", response);
-
-  const json = await response.json();
-
-  if (!response.ok) {
-    return err({ reason: "Unauthorized", details: json });
-  }
-
-  return ok(json);
+  return toServiceResult(result);
 }

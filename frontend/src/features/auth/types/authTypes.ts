@@ -8,6 +8,11 @@ export type LoginPostType = {
   password: string;
 };
 
+export type LoginPostResponseType = {
+  access_token: string;
+  token_type: string;
+};
+
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;
 
 export type RegisterPostType = {
@@ -15,6 +20,8 @@ export type RegisterPostType = {
   password: string;
   confirm: string;
 };
+
+export type RegisterPostResponseType = {};
 
 export type RegisterSchemaFlattenedErrorsType =
   | z.core.$ZodFlattenedError<RegisterSchemaType, { message: string; errorCode: string }>

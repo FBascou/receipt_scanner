@@ -23,16 +23,18 @@ export const onRequest: MiddlewareHandler = defineMiddleware(async (context, nex
 
   const token = context.cookies.get("access_token")?.value;
 
-  if (!token) {
-    return context.redirect("/login");
-  }
+  // if (!token) {
+  //   return context.redirect("/login");
+  // }
 
   let user: User | null = null;
 
   if (token) {
     try {
-      const [error, res] = await getUser(context);
-      if (!error) user = res;
+      const result = await getUser(context);
+      if ("data" in result) {
+        user = result.data;
+      }
     } catch {
       user = null;
     }

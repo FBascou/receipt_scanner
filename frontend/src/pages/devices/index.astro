@@ -1,39 +1,32 @@
 ---
 import ButtonLink from "../../components/ButtonLink.astro";
+import { getDevices } from "../../features/devices/api/deviceApi";
 import CardDeviceList from "../../features/devices/components/CardDeviceList.astro";
 import Layout from "../../layouts/Layout.astro";
-import { requestApi } from "../../lib/requestApi";
 
 export const prerender = false;
 
-let errorMessage = null;
+const page = Number(Astro.url.searchParams.get("page") ?? "1");
+const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
+const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
+const order = String(Astro.url.searchParams.get("order") ?? "desc");
 
-const result = await requestApi(Astro, "/api/v1/devices/", {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  method: "GET",
-});
+const url = `?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
-const deviceList = await result.json();
-
-if (!result.ok) {
-  errorMessage = result?.details?.error?.message ?? result?.message ?? null;
-}
-
-console.log("GET", deviceList);
+const result = await getDevices(Astro, url);
+console.log("GET", result);
 ---
 
 <Layout title="Devices">
   <h1>Devices</h1>
+  <ButtonLink style="secondary" href="/devices/add-device" text="Add new device" />
   {
-    !deviceList.total ? (
+    !result.data?.total ? (
       <div>
         <p>There are no devices available</p>
-        <ButtonLink style="secondary" href="/devices/add-device" text="Add new device" />
       </div>
     ) : (
-      <CardDeviceList cardList={deviceList?.items} />
+      <CardDeviceList cardList={result.data?.items} />
     )
   }
   <!-- <Section title="Device 1">

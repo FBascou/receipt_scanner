@@ -11,19 +11,17 @@ type Props = {
   };
 };
 
-const user = Astro.locals.user;
-
 const { errorMessage, values } = Astro.props;
 ---
 
 <form method="POST">
   <fieldset name="form-add-device">
     <legend>Add device schema form</legend>
-    <div class="form-group">
+    <!-- <div class="form-group">
       <label for="user_id">Device name</label>
-      <input type="text" id="user_id" name="user_id" value={user?.id ?? values?.user_id} />
+      <input type="text" id="user_id" name="user_id" value={values?.user_id} />
       <p class="message-error" id="user_id-error"></p>
-    </div>
+    </div> -->
     <div class="form-group">
       <label for="name">Device name</label>
       <input type="text" id="name" name="name" value={values?.name} />

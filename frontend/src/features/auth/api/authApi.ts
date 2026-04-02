@@ -1,43 +1,35 @@
 import { AUTH_ENDPOINTS } from "../endpoints/authEndpoints";
-import type { LoginPostType, RegisterPostType } from "../types/authTypes";
-import { err, ok } from "../../../lib/requestResult";
+import type {
+  LoginPostResponseType,
+  LoginPostType,
+  RegisterPostResponseType,
+  RegisterPostType,
+} from "../types/authTypes";
+import { toServiceResult } from "../../../lib/requestResult";
 import { requestApi } from "../../../lib/requestApi";
 import type { APIContext } from "astro";
+import type { ServiceResultType } from "../../../types/types";
 
-export async function postLogin(context: APIContext, data: LoginPostType) {
-  const response = await requestApi(context, AUTH_ENDPOINTS.login, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+export async function postLogin(
+  context: APIContext,
+  data: LoginPostType,
+): Promise<ServiceResultType<LoginPostResponseType>> {
+  const result = await requestApi<LoginPostResponseType>(context, AUTH_ENDPOINTS.login, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
-  const json = await response.json();
-
-  if (!response.ok) {
-    return err({ reason: "Unauthorized", details: json });
-  }
-
-  return ok(json);
+  return toServiceResult(result);
 }
 
-export async function postRegister(context: APIContext, data: RegisterPostType) {
-  const response = await requestApi(context, AUTH_ENDPOINTS.register, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+export async function postRegister(
+  context: APIContext,
+  data: RegisterPostType,
+): Promise<ServiceResultType<RegisterPostResponseType>> {
+  const result = await requestApi<RegisterPostResponseType>(context, AUTH_ENDPOINTS.register, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
-  const json = await response.json();
-
-  if (!response.ok) {
-    // return err({ reason: "Unauthorized", details: json });
-    // maybe return err({reason: json.error.code, details: json}) or simply err(json)
-    return err({ reason: "Unauthorized", details: json });
-  }
-
-  return ok(json);
+  return toServiceResult(result);
 }

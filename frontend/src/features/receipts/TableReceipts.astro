@@ -32,7 +32,7 @@ const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
 const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
 const order = String(Astro.url.searchParams.get("order") ?? "desc");
 
-const url = `/api/v1/jobs/?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
+const url = `/api/v1/jobs?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
 const result = await requestApi(Astro, url, {
   headers: {

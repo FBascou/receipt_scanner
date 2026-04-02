@@ -3,19 +3,19 @@ import { getLoginAction } from "../features/auth/actions/getLoginAction";
 import FormLogin from "../features/auth/components/FormLogin.astro";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
-import type { LoginPostType } from "../features/auth/types/authTypes";
+import type { LoginSchemaType } from "../features/auth/types/authTypes";
 
 export const prerender = false;
 
 let errorMessage: string | null = null;
-let values: LoginPostType = {
+let values: LoginSchemaType = {
   email: "",
   password: "",
 };
 
 if (Astro.request.method === "POST") {
   const data = await Astro.request.formData();
-  values = Object.fromEntries(data) as LoginPostType;
+  values = Object.fromEntries(data) as LoginSchemaType;
 
   const result = await getLoginAction(values, Astro);
 
@@ -23,7 +23,7 @@ if (Astro.request.method === "POST") {
     return result;
   }
 
-  errorMessage = result?.details?.error?.message ?? result?.message ?? null;
+  errorMessage = result?.message ?? null;
 }
 ---
 

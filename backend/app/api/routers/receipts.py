@@ -11,6 +11,7 @@ from app.services.parser import sanitize_ocr_date
 from app.schemas.receipt import ReceiptResponse
 from app.schemas.receipt_job import ReceiptJobResponse
 from app.core.router import APIRouterWithErrors
+from app.core.exceptions import DeviceRequired
 
 # TODO:
 # Add pagination to job receipts
@@ -42,11 +43,11 @@ async def scan_receipt(
         source = JobUploadSource.AUTOMATIC
     #  source = ( JobUploadSource.AUTOMATIC if device_id else JobUploadSource.MANUAL)
     
-    idDevice = "N/A" if device_id else device_id
+    idDevice =  device_id if device_id else "N/A"
     
     # This should go in APIRouterWithErrors
     if source == JobUploadSource.AUTOMATIC and not device_id:
-        raise HTTPException(400, "Device required for automatic jobs")
+        raise DeviceRequired()
     
     # Read uploaded file
     image_bytes = await file.read()
@@ -121,7 +122,7 @@ async def scan_receipts(
     
     # This should go in APIRouterWithErrors
     if source == JobUploadSource.AUTOMATIC and not device_id:
-        raise HTTPException(400, "Device required for automatic jobs")
+        raise DeviceRequired()
 
     # Create a new ReceiptJob for this batch
     job = ReceiptJob(

@@ -19,11 +19,16 @@ class DeviceStatus(BaseModel):
     button_1: str
     button_2: str
     button_3: str
+    motor_1: str
+    motor_2: str
+    port_1: str
+    port_2: str
 
 class DeviceCreate(BaseModel):
-  name: str
-  mac: str
-  ip: str
+    # id: UUID
+    name: str
+    mac: str
+    ip: str
 
 class DeviceResponse(BaseModel):
     id: UUID

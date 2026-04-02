@@ -47,7 +47,6 @@ async def validation_exception_handler(
         },
     )
     
-
 def verify_device_mac(mac: str) -> bool:
     # regex = r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
     # regex = r'^(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})$'

@@ -3,23 +3,18 @@ import { getScanBatchService } from "../services/getScanBatchService";
 import type { ScanBatchPostType } from "../types/receiptTypes";
 
 export async function getScanBatchAction(data: ScanBatchPostType, Astro: AstroGlobal) {
-  const [error, response] = await getScanBatchService(Astro, data);
-  console.log("getScanBatchAction", { error, response });
+  const result = await getScanBatchService(Astro, data);
 
-  if (!error) {
-    console.log("Success");
+  if ("data" in result) {
+    return {
+      message: "Receipts successfully uploaded",
+      code: "SUCCESS",
+    };
   }
 
-  // FIX ERROR MESSAGES
-  const reason = error?.reason || "InvalidData";
-  switch (reason) {
-    case "InvalidData":
-      return { message: "Scan batch failed", details: error?.details };
-    case "Unauthorized":
-      return { message: "Invalid credentials, wrong email and/or password" };
-    case "Unexpected":
-      return { message: "Unexpected error" };
-    default:
-      throw new Error(`Unhandled error: ${reason satisfies never}`);
-  }
+  return {
+    message: result.error?.message ?? "Device call failed",
+    code: result.error?.code ?? "ERROR",
+    field: result.error?.field,
+  };
 }

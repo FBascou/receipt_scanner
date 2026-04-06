@@ -44,7 +44,7 @@ async def get_overview(db: Session = Depends(get_db), current_user: User = Depen
             .label("receipt_count"),
 
             # total amount
-            select(func.coalesce(func.sum(Receipt.total), 0))
+            select(func.coalesce(func.sum(Receipt.total_amount), 0))
             .select_from(Receipt)
             .join(ReceiptJob)
             .where(ReceiptJob.user_id == user_id)
@@ -55,7 +55,7 @@ async def get_overview(db: Session = Depends(get_db), current_user: User = Depen
     ).one()
 
     return UserOverviewResponse(
-        devices=result.device_count,
+        device_count=result.device_count,
         job_count=result.job_count,
         receipt_count=result.receipt_count,
         receipt_amount=result.receipt_amount,

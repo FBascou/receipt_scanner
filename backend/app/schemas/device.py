@@ -43,7 +43,7 @@ class DeviceResponse(BaseModel):
         from_attributes = True
 
 class PaginatedDeviceResponse(BaseModel):
-    total: int
+    total_pages: int
     page: int
     page_size: int
     items: List[DeviceResponse]

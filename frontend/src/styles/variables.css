@@ -24,14 +24,14 @@
   --clr-primary: rgb(0, 0, 0, 1);
   --clr-secondary: rgb(255, 255, 255, 1);
   --clr-tertiary: rgb(117, 117, 117);
-  --clr-accent: rgb(21, 6, 186);
+  --clr-accent: rgb(46, 80, 252);
   --clr-success: rgb(0, 193, 3);
   --clr-error: rgb(255, 0, 0, 1);
   --clr: light-dark(var(--clr-primary), var(--clr-secondary));
 
   /* Background Colors */
   --bg-primary: rgb(255, 255, 255, 1);
-  --bg-secondary: rgb(34, 34, 34);
+  --bg-secondary: rgb(40, 40, 40);
   --bg-tertiary: rgb(211, 211, 211, 1);
   --bg-accent: var(--clr-accent);
   --bg-accent-hover: rgb(18, 90, 161);
@@ -53,4 +53,14 @@
   /* Paddings */
   --p-layout-inline: calc(2rem + 1.5625vw);
   --p-layout-block: 1rem;
+}
+
+:root[data-theme="light"] {
+  --clr: var(--clr-primary);
+  --bg: var(--bg-primary);
+}
+
+:root[data-theme="dark"] {
+  --clr: var(--clr-secondary);
+  --bg: var(--bg-secondary);
 }

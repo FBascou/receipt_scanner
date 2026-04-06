@@ -1,3 +1,9 @@
+export enum FileTypeEnum {
+  CSV = "csv",
+  PDF = "pdf",
+  JSON = "json",
+}
+
 export type FiltersPageType = number;
 
 export type FiltersPageSizeType = number;
@@ -28,6 +34,27 @@ export type ApiErrorType = {
 //   error?: ApiErrorType;
 // };
 
+export type PaginatedListType<T> = {
+  total_pages: number;
+  page: number;
+  page_size: number;
+  items: T[];
+};
+
 export type ServiceResultType<T> =
   | { data: T; error?: never; status: number }
   | { data?: never; error: ApiErrorType; status: number };
+
+export type OverviewCardType = {
+  id: number;
+  title: string;
+  value: number | string;
+};
+
+export type TableHeadersType = string[];
+
+export type TablePaginationType = {
+  total_pages: number;
+  page_size: number;
+  current_page: number;
+};

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 from uuid import UUID, uuid4
-from fastapi import  Depends, File, HTTPException, UploadFile
+from fastapi import  Depends, File, UploadFile
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
@@ -19,7 +19,7 @@ from app.core.exceptions import DeviceRequired
 # Add filtering (by date / total)
 # Add background processing queue
 
-router = APIRouterWithErrors(prefix="/scan", tags=["scan"])
+router = APIRouterWithErrors(prefix="/receipts", tags=["receipts"])
 
 @router.post("/single", response_model=ReceiptResponse)
 async def scan_receipt(
@@ -89,7 +89,7 @@ async def scan_receipt(
     db_receipt = Receipt(
         id=uuid4(),
         job_id=job.id,
-        total=receipt_data.total or 0.0,
+        total_amount=receipt_data.total_amount or 0.0,
         date=sanitize_ocr_date(receipt_data.date),
         raw_text=receipt_data.raw_text or "",
         image_data=image_bytes,
@@ -129,6 +129,7 @@ async def scan_receipts(
         id=uuid4(),
         user_id=current_user.id,
         device_id=device_id,
+        total_amount=0.0,
         status=JobStatus.PENDING,
         source=source,
         uploaded_at=datetime.now(timezone.utc),
@@ -147,7 +148,7 @@ async def scan_receipts(
         db_receipt = Receipt(
             id=uuid4(),
             job_id=job.id,
-            total=receipt_data.total or 0.0,
+            total_amount=receipt_data.total_amount or 0.0,
             date=receipt_data.date or "unknown",
             raw_text=receipt_data.raw_text or "",
             image_data=image_bytes,
@@ -174,7 +175,7 @@ async def scan_receipts(
             {
                 "id": str(r.id),
                 "date": r.date,
-                "total": r.total,
+                "total_amount": r.total_amount,
                 "raw_text": r.raw_text,
                 "created_at": r.created_at.isoformat(),
             }

@@ -19,9 +19,9 @@ console.log("GET", result);
 
 <Layout title="Devices">
   <h1>Devices</h1>
-  <ButtonLink style="secondary" href="/devices/add-device" text="Add new device" />
+  <ButtonLink style="secondary" href="/devices/add" text="Add new device" />
   {
-    !result.data?.total ? (
+    !result.data?.total_pages ? (
       <div>
         <p>There are no devices available</p>
       </div>

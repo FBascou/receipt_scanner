@@ -1,4 +1,3 @@
-
 from typing import List, cast
 from fastapi import Depends, Query
 from sqlalchemy.orm import Session
@@ -9,7 +8,7 @@ from app.schemas.device import DeviceCreate, DeviceResponse, PaginatedDeviceResp
 from app.api.dependencies import get_current_user
 from app.db.models import Device, User
 from app.db.session import get_db
-from app.core.exceptions import DeviceAlreadyRegistered, DeviceInvalidIp, DeviceInvalidMac, DeviceInvalidName, DeviceNotFound
+from app.core.exceptions import DeviceAlreadyRegistered, DeviceInvalidIp, DeviceInvalidMac, DeviceNotFound
 from app.core.error_handlers import verify_device_ip, verify_device_mac
 
 router = APIRouterWithErrors(prefix="/devices", tags=["devices"])
@@ -32,9 +31,6 @@ async def add_device(
 
   if existing_device:
     raise DeviceAlreadyRegistered()
-  
-  if type(device_data.name) != str:
-    raise DeviceInvalidName()
   
   if not verify_device_mac(device_data.mac): 
     raise DeviceInvalidMac()
@@ -104,7 +100,7 @@ async def get_devices(
   # ]
 
   return PaginatedDeviceResponse(
-    total=total_count or 0,
+    total_pages=total_count or 0,
     page=page,
     page_size=page_size,
     items=cast(List[DeviceResponse], devices),

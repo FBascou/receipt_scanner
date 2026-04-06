@@ -1,0 +1,34 @@
+<select name="color-theme" id="color-theme">
+  <option value="AUTO">Auto</option>
+  <option value="DARK">Dark</option>
+  <option value="LIGHT">Light</option>
+</select>
+
+<script>
+  const select = document.getElementById("color-theme") as HTMLSelectElement;
+  const root = document.documentElement;
+
+  const savedTheme = localStorage.getItem("theme");
+
+  // Set initial state
+  if (savedTheme && savedTheme !== "AUTO") {
+    root.setAttribute("data-theme", savedTheme.toLowerCase());
+    select.value = savedTheme;
+  } else {
+    root.removeAttribute("data-theme");
+    select.value = "AUTO";
+  }
+
+  select.addEventListener("change", (event) => {
+    const target = event.target as HTMLSelectElement;
+    const value = target.value;
+
+    if (value === "AUTO") {
+      root.removeAttribute("data-theme");
+      localStorage.setItem("theme", "AUTO");
+    } else {
+      root.setAttribute("data-theme", value.toLowerCase());
+      localStorage.setItem("theme", value);
+    }
+  });
+</script>

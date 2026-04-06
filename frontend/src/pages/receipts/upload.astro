@@ -1,0 +1,35 @@
+---
+import { getScanBatchAction } from "../../features/receipts/actions/getScanBatchAction";
+import FormUploadReceipts from "../../features/receipts/components/FormUploadReceipts.astro";
+import type { ScanBatchSchemaType } from "../../features/receipts/types/receiptTypes";
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../layouts/Section.astro";
+
+export const prerender = false;
+
+let response: { message: string; code: string } | null = null;
+let values: ScanBatchSchemaType = {
+  files: [],
+};
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+  const fileList = data.getAll("files") as File[];
+  values = { files: fileList };
+
+  const result = await getScanBatchAction(values, Astro);
+
+  if (result instanceof Response) {
+    return result;
+  }
+
+  response = { message: result.message, code: result.code };
+}
+---
+
+<Layout title="upload receipts">
+  <h1>Upload</h1>
+  <Section>
+    <FormUploadReceipts response={response} values={values} />
+  </Section>
+</Layout>

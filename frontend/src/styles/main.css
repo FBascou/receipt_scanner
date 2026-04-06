@@ -13,6 +13,7 @@ html {
   font-family: var(--font);
   background-color: var(--bg);
   color: var(--clr);
+  color-scheme: light dark;
 }
 
 html,

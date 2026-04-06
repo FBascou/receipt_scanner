@@ -2,9 +2,10 @@ import type { APIContext } from "astro";
 import { requestApi } from "../../../lib/requestApi";
 import { toServiceResult } from "../../../lib/requestResult";
 import { USER_ENDPOINTS } from "../endpoints/userEndpoints";
+import type { UserOverviewType } from "../types/userTypes";
 
 export async function getUser(context: APIContext) {
-  const result = await requestApi<User | null>(context, USER_ENDPOINTS.me, {
+  const result = await requestApi<UserType | null>(context, USER_ENDPOINTS.me, {
     method: "GET",
   });
 
@@ -12,7 +13,7 @@ export async function getUser(context: APIContext) {
 }
 
 export async function getUserOverview(context: APIContext) {
-  const result = await requestApi(context, USER_ENDPOINTS.overview, {
+  const result = await requestApi<UserOverviewType | null>(context, USER_ENDPOINTS.overview, {
     method: "GET",
   });
 

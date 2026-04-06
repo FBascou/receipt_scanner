@@ -1,13 +1,13 @@
 ---
 import Button from "../../../components/Button.astro";
-import type { ScanBatchPostType } from "../types/receiptTypes";
+import type { ScanBatchSchemaType } from "../types/receiptTypes";
 
 type Props = {
-  errorMessage: string | null;
-  values: ScanBatchPostType;
+  response: { message: string; code: string } | null;
+  values: ScanBatchSchemaType;
 };
 
-const { errorMessage, values } = Astro.props;
+const { response, values } = Astro.props;
 ---
 
 <form method="POST" enctype="multipart/form-data">
@@ -28,9 +28,12 @@ const { errorMessage, values } = Astro.props;
     <div class="form-group">
       <Button text="Upload receipts" type="submit" />
       {
-        errorMessage ? (
-          <p class="message-error" id="form-error">
-            {errorMessage}
+        response ? (
+          <p
+            class={response.code === "SUCCESS" ? "message-success" : "message-error"}
+            id="form-error"
+          >
+            {response.message}
           </p>
         ) : null
       }

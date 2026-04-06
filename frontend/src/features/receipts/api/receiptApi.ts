@@ -2,15 +2,21 @@ import { toServiceResult } from "../../../lib/requestResult";
 import { requestApi } from "../../../lib/requestApi";
 import { RECEIPT_ENDPOINTS } from "../endpoints/receiptEndpoints";
 import type { APIContext } from "astro";
-import type { ScanBatchSchemaType } from "../types/receiptTypes";
+import type { JobGetResponseType, ScanBatchSchemaType } from "../types/receiptTypes";
+import type { FileTypeEnum, PaginatedListType } from "../../../types/types";
+import { API_BASE_URL } from "../../../lib/config";
 
 export async function getJobs(
   context: APIContext,
   filterParams: string = "?page=1&page_size=20&sort_by=uploaded_at&order=desc",
 ) {
-  const result = await requestApi(context, `${RECEIPT_ENDPOINTS.jobs}/${filterParams}`, {
-    method: "GET",
-  });
+  const result = await requestApi<PaginatedListType<JobGetResponseType>>(
+    context,
+    `${RECEIPT_ENDPOINTS.jobs}/${filterParams}`,
+    {
+      method: "GET",
+    },
+  );
 
   return toServiceResult(result);
 }
@@ -22,7 +28,7 @@ export async function postScanBatch(context: APIContext, data: ScanBatchSchemaTy
     formData.append("files", file);
   });
 
-  const result = await requestApi(context, RECEIPT_ENDPOINTS.scanBatch, {
+  const result = await requestApi(context, RECEIPT_ENDPOINTS.receiptsBatch, {
     method: "POST",
     body: formData,
     headers: {
@@ -34,4 +40,8 @@ export async function postScanBatch(context: APIContext, data: ScanBatchSchemaTy
   });
 
   return toServiceResult(result);
+}
+
+export function downloadJobFile(jobId: string, fileType: FileTypeEnum) {
+  return `${API_BASE_URL}${RECEIPT_ENDPOINTS.jobs}/${jobId}/${fileType}`;
 }

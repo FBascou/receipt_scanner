@@ -63,9 +63,10 @@ class ReceiptJob(Base):
     id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     device_id: Mapped[UUIDType | None] = mapped_column( UUID(as_uuid=True), ForeignKey("devices.id"), nullable=True)
+    total_amount: Mapped[float] = mapped_column(Float, nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    source: Mapped[JobUploadSource] = mapped_column(Enum(JobUploadSource), default=JobUploadSource.AUTOMATIC)
     image_count: Mapped[int] = mapped_column(Integer)
+    source: Mapped[JobUploadSource] = mapped_column(Enum(JobUploadSource), default=JobUploadSource.AUTOMATIC)
     status: Mapped[JobStatus] = mapped_column(Enum(JobStatus), default=JobStatus.PENDING)
     job_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     
@@ -83,7 +84,7 @@ class Receipt(Base):
     id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True) ,primary_key=True, default=uuid4)
     job_id: Mapped[UUIDType] = mapped_column(UUID(as_uuid=True), ForeignKey("receipt_jobs.id"))
     date: Mapped[str] = mapped_column(String)
-    total: Mapped[float] = mapped_column(Float, nullable=False)
+    total_amount: Mapped[float] = mapped_column(Float, nullable=False)
     image_url: Mapped[str] = mapped_column(String, nullable=True)
     image_data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     raw_text: Mapped[str] = mapped_column(String)
@@ -94,5 +95,5 @@ class Receipt(Base):
     __table_args__ = (
         Index("idx_receipt_job_id", "job_id"),
         Index("idx_receipt_created_at", "created_at"),
-        Index("idx_receipt_total", "total"),
+        Index("idx_receipt_total", "total_amount"),
     )

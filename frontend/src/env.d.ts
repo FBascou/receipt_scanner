@@ -1,7 +1,5 @@
-// import type { User } from "./types/user";
-
-type User = {
-  id: number;
+type UserType = {
+  // id: string;
   email: string;
   role: "user" | "admin";
   created_at: string;
@@ -9,6 +7,6 @@ type User = {
 
 declare namespace App {
   interface Locals {
-    user: User | null;
+    user: UserType | null;
   }
 }

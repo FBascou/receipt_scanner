@@ -3,6 +3,7 @@
 h1 {
   font-size: var(--h1);
   text-wrap: pretty;
+  color: var(--clr);
 }
 
 h2 {
@@ -13,11 +14,15 @@ h2 {
 
 h3 {
   font-size: var(--h3);
+  color: var(--clr);
 }
 
 li,
-p {
+p,
+tr,
+td {
   font-size: var(--p);
+  color: var(--clr);
 }
 
 label,
@@ -28,7 +33,7 @@ label,
 
 label:focus,
 .label:focus {
-  color: var(--clr-primary);
+  color: var(--clr);
 }
 
 span {

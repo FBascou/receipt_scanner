@@ -1,9 +1,9 @@
-import type { User } from "../../features/users/types/userTypes";
+import type { UserType } from "../../features/users/types/userTypes";
 
 type RouteGuard = {
   path: string;
   requireAuth?: boolean;
-  roles?: User["role"][];
+  roles?: UserType["role"][];
 };
 
 export const routeGuards: RouteGuard[] = [

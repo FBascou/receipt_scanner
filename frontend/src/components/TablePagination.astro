@@ -1,20 +1,17 @@
 ---
-type TableDataPaginationType = {
-  total: number;
-  page_size: number;
-  current_page: number;
-};
+import type { TablePaginationType } from "../types/types";
+
 interface Props {
-  pagination: TableDataPaginationType;
+  pagination: TablePaginationType;
 }
 // TODO
 // Selecting page size resets when changing page
 // add ..., first page and last page
 
 const { pagination } = Astro.props;
-const { total, page_size, current_page } = pagination;
+const { total_pages, page_size, current_page } = pagination;
 // const totalPages = 20;
-const totalPages = Math.ceil(total / page_size);
+const totalPages = Math.ceil(total_pages / page_size);
 const pageSizeList = [5, 10, 15, 20, 50];
 const previousPages = current_page > 2 ? current_page - 3 : 0;
 const nextPages = current_page > 0 ? current_page + 2 : 0;

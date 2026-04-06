@@ -11,7 +11,7 @@ def process_image(image_bytes: bytes) -> ReceiptCreate:
     extracted_text = extract_text(image)
 
     return ReceiptCreate(
-        total=extract_total(extracted_text),
+        total_amount=extract_total(extracted_text),
         date=extract_date(extracted_text),
         raw_text=extracted_text,
     )

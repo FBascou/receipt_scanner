@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const DeviceAddSchema = z.object({
-  // user_id: z.uuidv4(),
   name: z.string(),
   mac: z.string(),
   ip: z.string(),

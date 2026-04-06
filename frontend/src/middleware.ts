@@ -1,7 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
 import { getUser } from "./features/users/api/userApi";
 import type { MiddlewareHandler } from "astro";
-import type { User } from "./features/users/types/userTypes";
 
 const PUBLIC_ROUTES = ["/login", "/register", "/forgot-password"];
 // const PROTECTED_ROUTES = [
@@ -23,9 +22,9 @@ export const onRequest: MiddlewareHandler = defineMiddleware(async (context, nex
 
   const token = context.cookies.get("access_token")?.value;
 
-  // if (!token) {
-  //   return context.redirect("/login");
-  // }
+  if (!token) {
+    return context.redirect("/login");
+  }
 
   let user: User | null = null;
 

@@ -1,26 +1,38 @@
 import z from "zod";
 import type { ScanBatchSchema } from "../schemas/receiptSchemas";
 
-export type JobUploadSource = "MANUAL" | "AUTOMATIC";
+export type JobUploadSourceType = "MANUAL" | "AUTOMATIC";
 
-export type JobStatus = "PENDING" | "PROCESSED" | "FAILED";
+export type JobStatusType = "PENDING" | "PROCESSED" | "FAILED";
 
-export type JobReceiptType = {
+export type JobGetResponseType = {
   id: string;
+  device_id: string | null;
+  total_amount: number;
   uploaded_at: string;
-  source: JobUploadSource;
   image_count: number;
-  status: JobStatus;
+  source: JobUploadSourceType;
+  status: JobStatusType;
 };
 
 export type JobGetType = {
-  total: number;
+  total_pages: number;
   page: number;
   page_size: number;
-  items: JobReceiptType[];
+  items: JobGetResponseType[];
 };
 // export type JobResponseSchemaType = z.infer<typeof ScanBatchSchema>;
 
 export type ScanBatchPostType = { files: File[] };
 
 export type ScanBatchSchemaType = z.infer<typeof ScanBatchSchema>;
+
+export type TableReceiptsRowsType = {
+  id: string;
+  device_id: string | null;
+  total_amount: number;
+  uploaded_at: string;
+  image_count: number;
+  source: JobUploadSourceType;
+  status: JobStatusType;
+};

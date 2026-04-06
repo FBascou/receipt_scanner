@@ -1,10 +1,10 @@
 import type { APIContext } from "astro";
 import { toServiceResult } from "../../../lib/requestResult";
-import type { ServiceResultType } from "../../../types/types";
+import type { PaginatedListType, ServiceResultType } from "../../../types/types";
 import { requestApi } from "../../../lib/requestApi";
 import { DEVICE_ENDPOINTS } from "../endpoints/deviceEndpoints";
 import type {
-  DevicePostType,
+  DeviceAddSchemaType,
   DevicePostResponseType,
   DeviceGetType,
   DeviceGetResponseType,
@@ -13,9 +13,9 @@ import type {
 export async function getDevices(
   context: APIContext,
   data: DeviceGetType,
-): Promise<ServiceResultType<DeviceGetResponseType>> {
+): Promise<ServiceResultType<PaginatedListType<DeviceGetResponseType>>> {
   // Add  return data type
-  const result = await requestApi<DeviceGetResponseType>(
+  const result = await requestApi<PaginatedListType<DeviceGetResponseType>>(
     context,
     `${DEVICE_ENDPOINTS.devices}/${data}`,
     {
@@ -28,7 +28,7 @@ export async function getDevices(
 
 export async function postDevices(
   context: APIContext,
-  data: DevicePostType,
+  data: DeviceAddSchemaType,
 ): Promise<ServiceResultType<DevicePostResponseType>> {
   // Add  return data type
   const result = await requestApi<DevicePostResponseType>(context, DEVICE_ENDPOINTS.devices, {

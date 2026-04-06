@@ -6,10 +6,10 @@ from uuid import UUID
 
 class ReceiptCreate(BaseModel):
     date: str
-    total: float
+    total_amount: float
     raw_text: str
 
-    @field_validator("total")
+    @field_validator("total_amount")
     @classmethod
     def validate_total(cls, v: float):
         if v < 0:
@@ -32,7 +32,7 @@ class ReceiptCreate(BaseModel):
 class ReceiptResponse(BaseModel):
     id: UUID
     date: str
-    total: float
+    total_amount: float
     raw_text: str
     created_at: datetime
 
@@ -40,7 +40,7 @@ class ReceiptResponse(BaseModel):
         from_attributes = True  # important for SQLAlchemy
 
 class PaginatedReceiptResponse(BaseModel):
-    total: int
+    total_pages: int
     page: int
     page_size: int
     items: List[ReceiptResponse]

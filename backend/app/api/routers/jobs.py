@@ -117,6 +117,7 @@ def get_jobs(
 
     jobs = (
         query
+        .options(selectinload(ReceiptJob.receipts))
         .offset((page - 1) * page_size)
         .limit(page_size)
         .all()
@@ -128,7 +129,7 @@ def get_jobs(
     ]
 
     return PaginatedJobResponse(
-        total=total_count or 0,
+        total_pages=total_count or 0,
         page=page,
         page_size=page_size,
         items=job_responses,
@@ -182,10 +183,10 @@ def get_job_receipts(
     query = db.query(Receipt).filter(Receipt.job_id == job_id)
 
     if min_total is not None:
-        query = query.filter(Receipt.total >= min_total)
+        query = query.filter(Receipt.total_amount >= min_total)
 
     if max_total is not None:
-        query = query.filter(Receipt.total <= max_total)
+        query = query.filter(Receipt.total_amount <= max_total)
 
     if date_from is not None:
         query = query.filter(Receipt.created_at >= date_from)
@@ -199,7 +200,7 @@ def get_job_receipts(
     # Any because columns are different types (datetime, float, str) 
     sortable_fields: Dict[str, InstrumentedAttribute[Any]] = {
         "created_at": Receipt.created_at,
-        "total": Receipt.total,
+        "total_amount": Receipt.total_amount,
         "date": Receipt.date,
     }
 
@@ -229,7 +230,7 @@ def get_job_receipts(
     ]
 
     return PaginatedReceiptResponse(
-        total=total_count or 0,
+        total_pages=total_count or 0,
         page=page,
         page_size=page_size,
         items=receipt_responses,

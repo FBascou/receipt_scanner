@@ -2,59 +2,36 @@
 import CardList from "../components/CardList.astro";
 import ChartLine from "../components/ChartLine.astro";
 import { getUserOverview } from "../features/users/api/userApi";
-import type { UserOverview } from "../features/users/types/userTypes";
 import Layout from "../layouts/Layout.astro";
 import Section from "../layouts/Section.astro";
-import { requireUser } from "../lib/auth/requireUser";
+import type { OverviewCardType } from "../types/types";
 
 export const prerender = false;
 
-type CardType = {
-  id: number;
-  title: string;
-  value: number | string;
-};
-
-const user = requireUser(Astro);
-
-let result = null;
-
-if (user) {
-  try {
-    // TODO:
-    // Create a typed return for getUserOverview
-    // Create a postAddDevice
-    // Something wrong with the total amount receipts
-    result = await getUserOverview(Astro);
-  } catch (error) {
-    console.log("error", error);
-    result = error;
-  }
-}
-
+const result = await getUserOverview(Astro);
 console.log(result);
 
 // If multiple devices connected, then receipts scanned in device 1, device n... receipt amount in device 1, device n...
-const overviewCards: CardType[] = [
+const overviewCards: OverviewCardType[] = [
   {
     id: 0,
     title: "Devices online",
-    value: result?.[1]?.devices ?? 0,
+    value: result?.data?.device_count ?? 0,
   },
   {
     id: 1,
     title: "Uploads made",
-    value: result?.[1]?.job_count ?? 0,
+    value: result?.data?.job_count ?? 0,
   },
   {
     id: 2,
     title: "Receipts scanned",
-    value: result?.[1]?.receipt_count ?? 0,
+    value: result?.data?.receipt_count ?? 0,
   },
   {
     id: 3,
     title: "Total receipt amount",
-    value: result?.[1]?.receipt_amount.toFixed(2) ?? 0,
+    value: result?.data?.receipt_amount.toFixed(2) ?? 0,
   },
 ];
 ---

@@ -1,68 +1,51 @@
 ---
-import ButtonLink from "../../components/ButtonLink.astro";
-import TablePagination from "../../components/TablePagination.astro";
-import { requestApi } from "../../lib/requestApi";
-
-type TableDataHeadersType = string[];
-
-type TableDataRowsType = {
-  id: string;
-  uploaded_at: string;
-  device_id: string;
-  image_count: number;
-  total: number;
-  source: string;
-  status: string;
-};
-
-type TableDataPaginationType = {
-  total: number;
-  page_size: number;
-  current_page: number;
-};
-
-enum FileTypeEnum {
-  CSV = "csv",
-  PDF = "pdf",
-  JSON = "json",
-}
+import ButtonLink from "../../../components/ButtonLink.astro";
+import TablePagination from "../../../components/TablePagination.astro";
+import {
+  FileTypeEnum,
+  type TableHeadersType,
+  type TablePaginationType,
+} from "../../../types/types";
+import { downloadJobFile, getJobs } from "../api/receiptApi";
+import type { TableReceiptsRowsType } from "../types/receiptTypes";
 
 const page = Number(Astro.url.searchParams.get("page") ?? "1");
 const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
 const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
 const order = String(Astro.url.searchParams.get("order") ?? "desc");
 
-const url = `/api/v1/jobs?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
+const url = `?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
-const result = await requestApi(Astro, url, {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  method: "GET",
-});
+const result = await getJobs(Astro, url);
+console.log("result", result);
 
-const { items, total, page: current_page, page_size } = await result.json();
+const {
+  total_pages,
+  page: current_page,
+  page_size,
+  items,
+} = result?.data ?? {
+  total_pages: 0,
+  page: 1,
+  page_size: 20,
+  items: [],
+};
 
 const caption = "List of all receipts scanned and uploaded";
-const headers: TableDataHeadersType = [
+const headers: TableHeadersType = [
   "",
   "Date uploaded",
   "Device Id",
   "Number of receipts",
   "Total amount (€)",
   "Source",
-  "Status",
   "",
   "",
 ];
-const rows: TableDataRowsType[] = items;
+const rows: TableReceiptsRowsType[] = items;
 console.log("rows", rows);
 
-const handleFileDownload = (jobId: string, fileType: FileTypeEnum) => {
-  return `http://127.0.0.1:8000/api/v1/jobs/${jobId}/${fileType}`;
-};
-
-const pagination: TableDataPaginationType = { total, page_size, current_page };
+const pagination: TablePaginationType = { total_pages, page_size, current_page };
 ---
 
 <div>
@@ -70,7 +53,7 @@ const pagination: TableDataPaginationType = { total, page_size, current_page };
     <div class="table-header">
       {caption ? <caption>{caption}</caption> : null}
       <ButtonLink
-        href={"/upload-receipts"}
+        href={"/receipts/upload"}
         text="Click here to upload receipts manually"
         style="secondary"
       />
@@ -84,24 +67,23 @@ const pagination: TableDataPaginationType = { total, page_size, current_page };
       {
         rows?.map((row, index) => (
           <tr>
-            <td>{index + 1}</td>
+            <td>{(current_page - 1) * page_size + index + 1}</td>
             <td>{new Date(row.uploaded_at).toLocaleString()}</td>
-            <td>{row.device_id ?? "N/A"}</td>
+            <td>{row.device_id ? row.device_id.slice(0, 8) : "Manual"}</td>
             <td>{row.image_count}</td>
-            <td>{row.total}</td>
+            <td>{row.total_amount.toFixed(2)}</td>
             <td>{row.source}</td>
-            <td>{row.status}</td>
             <td>
               <ButtonLink
                 style="secondary"
-                href={handleFileDownload(row.id, FileTypeEnum.PDF)}
+                href={downloadJobFile(row.id, FileTypeEnum.PDF)}
                 text="Download PDF"
               />
             </td>
             <td>
               <ButtonLink
                 style="secondary"
-                href={handleFileDownload(row.id, FileTypeEnum.CSV)}
+                href={downloadJobFile(row.id, FileTypeEnum.CSV)}
                 text="Download CSV"
               />
             </td>
@@ -141,7 +123,6 @@ const pagination: TableDataPaginationType = { total, page_size, current_page };
   tr:has(td):hover,
   tr:has(a:focus-visible) {
     background-color: light-dark(var(--bg-tertiary), var(--bg-secondary));
-    color: light-dark(var(--clr-primary), var(--clr-secondary));
   }
 
   th,

@@ -36,7 +36,7 @@ class UserPasswordChange(BaseModel):
         return validate_password_strength(v)
     
 class UserOverviewResponse(BaseModel): 
-    devices: int
+    device_count: int
     job_count: int
     receipt_count: int
     receipt_amount: float

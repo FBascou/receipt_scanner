@@ -58,3 +58,5 @@ export type TablePaginationType = {
   page_size: number;
   current_page: number;
 };
+
+export type FetchStateType = "error" | "empty" | "success";

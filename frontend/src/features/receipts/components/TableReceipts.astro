@@ -1,11 +1,14 @@
 ---
 import ButtonLink from "../../../components/ButtonLink.astro";
+import PageEmptyState from "../../../components/PageEmptyState.astro";
+import PageErrorState from "../../../components/PageErrorState.astro";
 import TablePagination from "../../../components/TablePagination.astro";
 import {
   FileTypeEnum,
   type TableHeadersType,
   type TablePaginationType,
 } from "../../../types/types";
+import { getFetchState } from "../../../utils/utils";
 import { downloadJobFile, getJobs } from "../api/receiptApi";
 import type { TableReceiptsRowsType } from "../types/receiptTypes";
 
@@ -17,7 +20,8 @@ const order = String(Astro.url.searchParams.get("order") ?? "desc");
 const url = `?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
 const result = await getJobs(Astro, url);
-console.log("result", result?.data?.items);
+
+const state = getFetchState(result);
 
 const {
   total_pages,
@@ -48,52 +52,58 @@ console.log("rows", rows);
 const pagination: TablePaginationType = { total_pages, page_size, current_page };
 ---
 
-<div>
-  <table>
-    <div class="table-header">
-      {caption ? <caption>{caption}</caption> : null}
-      <ButtonLink
-        href={"/receipts/upload"}
-        text="Click here to upload receipts manually"
-        style="secondary"
-      />
-    </div>
-    <thead>
-      <tr>
-        {headers?.map((header) => <th scope="col">{header}</th>)}
-      </tr>
-    </thead>
-    <tbody>
-      {
-        rows?.map((row, index) => (
+{state === "error" && <PageErrorState message="Failed to load receipts" />}
+{state === "error" && <PageEmptyState message="No receipts found" />}
+{
+  state === "success" && (
+    <div>
+      <table>
+        <div class="table-header">
+          {caption ? <caption>{caption}</caption> : null}
+          <ButtonLink
+            href={"/receipts/upload"}
+            text="Click here to upload receipts manually"
+            style="secondary"
+          />
+        </div>
+        <thead>
           <tr>
-            <td>{(current_page - 1) * page_size + index + 1}</td>
-            <td>{new Date(row.uploaded_at).toLocaleString()}</td>
-            <td>{row.device_id ? row.device_id.slice(0, 8) : "N/A"}</td>
-            <td>{row.image_count}</td>
-            <td>{row.total_amount.toFixed(2)}</td>
-            <td>{row.source}</td>
-            <td>
-              <ButtonLink
-                style="secondary"
-                href={downloadJobFile(row.id, FileTypeEnum.PDF)}
-                text="Download PDF"
-              />
-            </td>
-            <td>
-              <ButtonLink
-                style="secondary"
-                href={downloadJobFile(row.id, FileTypeEnum.CSV)}
-                text="Download CSV"
-              />
-            </td>
+            {headers?.map((header) => (
+              <th scope="col">{header}</th>
+            ))}
           </tr>
-        ))
-      }
-    </tbody>
-  </table>
-  {pagination ? <TablePagination pagination={pagination} /> : null}
-</div>
+        </thead>
+        <tbody>
+          {rows?.map((row, index) => (
+            <tr>
+              <td>{(current_page - 1) * page_size + index + 1}</td>
+              <td>{new Date(row.uploaded_at).toLocaleString()}</td>
+              <td>{row.device_id ? row.device_id.slice(0, 8) : "N/A"}</td>
+              <td>{row.image_count}</td>
+              <td>{row.total_amount.toFixed(2)}</td>
+              <td>{row.source}</td>
+              <td>
+                <ButtonLink
+                  style="secondary"
+                  href={downloadJobFile(row.id, FileTypeEnum.PDF)}
+                  text="Download PDF"
+                />
+              </td>
+              <td>
+                <ButtonLink
+                  style="secondary"
+                  href={downloadJobFile(row.id, FileTypeEnum.CSV)}
+                  text="Download CSV"
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {pagination ? <TablePagination pagination={pagination} /> : null}
+    </div>
+  )
+}
 
 <style>
   table {

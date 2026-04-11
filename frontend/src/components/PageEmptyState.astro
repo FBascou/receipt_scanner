@@ -1,0 +1,18 @@
+---
+interface Props {
+  message?: string;
+}
+
+const { message = "No data found" } = Astro.props;
+---
+
+<div class="state empty">
+  <p>{message}</p>
+</div>
+
+<style>
+  .empty {
+    padding: 1rem;
+    opacity: 0.7;
+  }
+</style>

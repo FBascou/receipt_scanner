@@ -1,0 +1,18 @@
+---
+interface Props {
+  message?: string;
+}
+
+const { message = "Something went wrong" } = Astro.props;
+---
+
+<div class="state error">
+  <p>{message}</p>
+</div>
+
+<style>
+  .error {
+    padding: 1rem;
+    border: 1px solid red;
+  }
+</style>

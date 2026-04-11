@@ -1,4 +1,5 @@
 import z from "zod";
+import type { FetchStateType } from "../types/types";
 
 export function getFormValues(form: HTMLFormElement) {
   const formData = new FormData(form);
@@ -50,4 +51,10 @@ export function handleForm(form: HTMLFormElement, schema: z.ZodSchema) {
       event.preventDefault();
     }
   });
+}
+
+export function getFetchState(result: any): FetchStateType {
+  if (result.error) return "error";
+  if (!result.data?.items?.length) return "empty";
+  return "success";
 }

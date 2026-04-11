@@ -1,28 +1,28 @@
 from datetime import datetime
 import re
+from typing import List
+
+total_keywords = ["totale complessivo", "totale euro", "totale"]
 
 def extract_total(text: str) -> float:
     """
-    Extract the most likely total amount from OCR text.
+    Find the total amount from OCR text by checking if the previous word is in total_keywords.
     """
-    # Match prices like 12.34 but avoid years (20xx)
-    candidates = re.findall(
-        r'(?<!\d)(\d{1,4}\.\d{2})(?!\d)',
-        text
-    )
+    text = text.upper().replace("\n", " ")
+    
+    matches: List[float] = []
 
-    values: list[float] = []
+    for keyword in total_keywords:
+        pattern = rf"{keyword}\s*([\d]+(?:[.,][\d]+)?)"
 
-    for c in candidates:
-        value = float(c)
-        # Filter out years or nonsense values
-        if 0 < value < 10000:
-            values.append(value)
+        for match in re.finditer(pattern, text, re.IGNORECASE):
+            try:
+                value = float(match.group(1).replace(",", "."))
+                matches.append(value)
+            except ValueError:
+                continue
 
-    if not values:
-        return 0.0
-
-    return max(values)
+    return max(matches) if matches else 0.0
 
 def extract_date(text: str) -> str:
     """

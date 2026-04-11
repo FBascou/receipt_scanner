@@ -70,7 +70,7 @@ def get_jobs(
     """
     Return array of jobs with filtering, pagination, sorting and search. 
     """
-    
+
     query = db.query(ReceiptJob).filter(ReceiptJob.user_id == current_user.id)
 
     if min_image_count is not None:
@@ -100,6 +100,7 @@ def get_jobs(
     sortable_fields: Dict[str, InstrumentedAttribute[Any]] = {
         "uploaded_at": ReceiptJob.uploaded_at,
         "image_count": ReceiptJob.image_count,
+        "total_amount": ReceiptJob.total_amount,
     }
 
     if sort_by not in sortable_fields:

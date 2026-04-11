@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 from uuid import UUID, uuid4
 from fastapi import  Depends, File, UploadFile
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
@@ -136,8 +137,9 @@ async def scan_receipts(
         image_count=len(files),
     )
     db.add(job)
-    db.commit()
-    db.refresh(job)
+    db.flush()
+    # db.commit()
+    # db.refresh(job)
 
     receipts: List[Receipt] = []
 
@@ -157,11 +159,17 @@ async def scan_receipts(
         )
         db.add(db_receipt)
         receipts.append(db_receipt)
+    
+    db.flush()
 
-    db.commit()
-
-    # Attach receipts to job for response
-    job.receipts = receipts
+    total_amount = (
+        db.query(func.sum(Receipt.total_amount))
+        .filter(Receipt.job_id == job.id)
+        .scalar()
+        or 0.0
+    )
+    job.total_amount = total_amount
+    job.status = JobStatus.PROCESSED
 
     # Generate job.json metadata
     job_json: Dict[str, Any] = {
@@ -169,6 +177,7 @@ async def scan_receipts(
         "user_id": str(current_user.id),
         "uploaded_at": job.uploaded_at.isoformat(),
         "source": job.source.value,
+        "total_amount": job.total_amount,
         "image_count": job.image_count,
         "status": job.status.value,
         "receipts": [
@@ -185,5 +194,6 @@ async def scan_receipts(
     
     job.job_json = job_json   
     db.commit()
+    db.refresh(job)
 
     return job

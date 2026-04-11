@@ -51,7 +51,13 @@ export type OverviewCardType = {
   value: number | string;
 };
 
-export type TableHeadersType = string[];
+export type TableHeader = {
+  id: string;
+  headers: string | null;
+  title: string;
+};
+
+export type TableHeadersType = TableHeader[];
 
 export type TablePaginationType = {
   total_pages: number;

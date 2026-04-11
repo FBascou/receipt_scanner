@@ -1,8 +1,9 @@
 ---
 import ButtonLink from "../../components/ButtonLink.astro";
+import Table from "../../components/Table.astro";
 import { getDevices } from "../../features/devices/api/deviceApi";
-import CardDeviceList from "../../features/devices/components/CardDeviceList.astro";
 import Layout from "../../layouts/Layout.astro";
+import type { TableHeadersType } from "../../types/types";
 
 export const prerender = false;
 
@@ -14,13 +15,28 @@ const order = String(Astro.url.searchParams.get("order") ?? "desc");
 const url = `?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
 
 const result = await getDevices(Astro, url);
+
+const caption = "List of all your devices";
+
+const headers: TableHeadersType = [
+  { id: "id", headers: null, title: "" },
+  { id: "name", headers: null, title: "Name" },
+  { id: "id", headers: null, title: "Device ID" },
+  { id: "mac", headers: null, title: "Mac address" },
+  { id: "ip", headers: null, title: "IP address" },
+  { id: "created_at", headers: null, title: "Date added" },
+  { id: "status", headers: null, title: "Status" },
+  { id: "go_to", headers: null, title: "" },
+];
 console.log("GET", result);
 ---
 
 <Layout title="Devices">
   <h1>Devices</h1>
-  <ButtonLink style="secondary" href="/devices/add" text="Add new device" />
-  {
+
+  <ButtonLink style="secondary" href="/devices/add" text="Click here to add new device" />
+  <Table caption={caption} headers={headers} result={result} />
+  <!-- {
     !result.data?.total_pages ? (
       <div>
         <p>There are no devices available</p>
@@ -28,7 +44,7 @@ console.log("GET", result);
     ) : (
       <CardDeviceList cardList={result.data?.items} />
     )
-  }
+  } -->
   <!-- <Section title="Device 1">
     Status: Connected Connection: Stable Error: None ------ Experiencing issues? Restart device or
     Test Connection Serial number: Model: Software version: IP address:

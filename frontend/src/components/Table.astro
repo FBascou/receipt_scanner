@@ -1,0 +1,153 @@
+---
+import { downloadJobFile } from "../features/receipts/api/receiptApi";
+import { FileTypeEnum, type TableHeadersType, type TablePaginationType } from "../types/types";
+import { getFetchState, redirectTo } from "../utils/utils";
+import ButtonLink from "./ButtonLink.astro";
+import PageEmptyState from "./PageEmptyState.astro";
+import PageErrorState from "./PageErrorState.astro";
+import TablePagination from "./TablePagination.astro";
+
+type Props = {
+  caption: string;
+  headers: TableHeadersType;
+  result: any;
+};
+
+const { caption, headers, result } = Astro.props;
+
+const state = getFetchState(result);
+
+const {
+  total_pages,
+  page: current_page,
+  page_size,
+  items,
+} = result?.data ?? {
+  total_pages: 0,
+  page: 1,
+  page_size: 20,
+  items: [],
+};
+
+const pagination: TablePaginationType = { total_pages, page_size, current_page };
+---
+
+{state === "error" && <PageErrorState message="Failed to load receipts" />}
+{state === "error" && <PageEmptyState message="No receipts found" />}
+{
+  state === "success" && (
+    <div>
+      <table>
+        {caption ? <caption>{caption}</caption> : null}
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th scope="col" id={header.id} headers={header.headers}>
+                {header.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item, index) => (
+            <tr>
+              {headers.map((header) => {
+                // Special column: index
+                if (header.id === "id") {
+                  return <td>{(current_page - 1) * page_size + index + 1}</td>;
+                }
+
+                if (header.id === "uploaded_at") {
+                  return <td>{new Date(item.uploaded_at).toLocaleString()}</td>;
+                }
+
+                if (header.id === "created_at") {
+                  return <td>{new Date(item.created_at).toLocaleString()}</td>;
+                }
+
+                if (header.id === "total_amount") {
+                  return <td>{Number(item.total_amount).toFixed(2)}</td>;
+                }
+
+                if (header.id === "download_pdf") {
+                  return (
+                    <td>
+                      <ButtonLink
+                        style="secondary"
+                        href={downloadJobFile(item.id, FileTypeEnum.PDF)}
+                        text="Download PDF"
+                      />
+                    </td>
+                  );
+                }
+
+                if (header.id === "download_csv") {
+                  return (
+                    <td>
+                      <ButtonLink
+                        style="secondary"
+                        href={downloadJobFile(item.id, FileTypeEnum.CSV)}
+                        text="Download CSV"
+                      />
+                    </td>
+                  );
+                }
+
+                // Default: dynamic field
+                const value = item[header.id];
+
+                const isLink =
+                  header.id === "go_to" || (typeof value === "string" && value.startsWith("http"));
+
+                return (
+                  <td>
+                    {isLink ? (
+                      <ButtonLink
+                        style="secondary"
+                        href={redirectTo("devices", value)}
+                        text="Go to details"
+                      />
+                    ) : (
+                      (value ?? "-")
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {pagination ? <TablePagination pagination={pagination} /> : null}
+    </div>
+  )
+}
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+  }
+
+  caption,
+  thead {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  tr {
+    /* outline: var(--border); */
+    box-shadow: var(--box-shadow);
+  }
+
+  tr:has(td):hover,
+  tr:has(a:focus-visible) {
+    background-color: light-dark(var(--bg-tertiary), var(--bg-secondary));
+  }
+
+  th,
+  td {
+    padding: 0.5rem 1rem;
+    text-align: left;
+  }
+</style>

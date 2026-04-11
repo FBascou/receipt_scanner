@@ -1,14 +1,44 @@
 ---
-import TableReceipts from "../../features/receipts/components/TableReceipts.astro";
+import Table from "../../components/Table.astro";
+import { getJobs } from "../../features/receipts/api/receiptApi";
 import Layout from "../../layouts/Layout.astro";
 import Section from "../../layouts/Section.astro";
+import type { TableHeadersType } from "../../types/types";
+import ButtonLink from "../../components/ButtonLink.astro";
 
 export const prerender = false;
+
+const page = Number(Astro.url.searchParams.get("page") ?? "1");
+const pageSize = Number(Astro.url.searchParams.get("page_size") ?? "20");
+const sortBy = String(Astro.url.searchParams.get("sort_by") ?? "uploaded_at");
+const order = String(Astro.url.searchParams.get("order") ?? "desc");
+
+const url = `?page=${page}&page_size=${pageSize}&sort_by=${sortBy}&order=${order}`;
+
+const result = await getJobs(Astro, url);
+
+const caption = "List of all receipts scanned and uploaded";
+
+const headers: TableHeadersType = [
+  { id: "id", headers: null, title: "" },
+  { id: "uploaded_at", headers: null, title: "Date uploaded" },
+  { id: "device_id", headers: null, title: "Device ID" },
+  { id: "image_count", headers: null, title: "Number of receipts" },
+  { id: "total_amount", headers: null, title: "Total amount (€)" },
+  { id: "source", headers: null, title: "Source" },
+  { id: "download_pdf", headers: null, title: "" },
+  { id: "download_csv", headers: null, title: "" },
+];
 ---
 
 <Layout title="Receipts">
   <h1>Receipts</h1>
   <Section>
-    <TableReceipts />
+    <ButtonLink
+      href={"/receipts/upload"}
+      text="Click here to upload receipts manually"
+      style="secondary"
+    />
+    <Table caption={caption} headers={headers} result={result} />
   </Section>
 </Layout>

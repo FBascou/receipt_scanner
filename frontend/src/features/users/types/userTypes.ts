@@ -15,3 +15,10 @@ export type UserOverviewType = {
   receipt_count: number;
   receipt_amount: number;
 };
+
+export type UserUpdateAccountType = {
+  id: string;
+  email: string;
+  password: string;
+  confirm: string;
+};

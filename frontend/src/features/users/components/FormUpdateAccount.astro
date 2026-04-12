@@ -1,6 +1,5 @@
 ---
 import Button from "../../../components/Button.astro";
-import ButtonLink from "../../../components/ButtonLink.astro";
 
 interface Props {
   errorMessage: string | null;
@@ -15,27 +14,46 @@ const { errorMessage, values } = Astro.props;
 ---
 
 <form method="POST">
-  <fieldset name="form-register">
-    <legend>Register form</legend>
+  <fieldset name="form-update-account">
+    <legend>Update account form</legend>
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" name="email" value={values?.email} />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value={values?.email}
+        disabled
+        autocomplete="off"
+      />
       <p class="message-error" id="email-error"></p>
     </div>
     <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" value={values?.password} />
+      <label for="password">Change to new password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        value={values?.password}
+        autocomplete="off"
+      />
       <button type="button" id="password-button">O</button>
       <p class="message-error" id="password-error"></p>
     </div>
     <div class="form-group">
-      <label for="confirm">Confirm Password</label>
-      <input type="password" id="confirm" name="confirm" value={values?.confirm} />
+      <label for="confirm">Confirm new password</label>
+      <input
+        type="password"
+        id="confirm"
+        name="confirm"
+        value={values?.confirm}
+        autocomplete="off"
+      />
       <button type="button" id="confirm-button">O</button>
       <p class="message-error" id="confirm-error"></p>
     </div>
     <div class="form-group">
-      <Button text="Register" type="submit" />
+      <Button text="Update" type="submit" />
       {
         errorMessage ? (
           <p class="message-error" id="form-error">
@@ -44,11 +62,6 @@ const { errorMessage, values } = Astro.props;
         ) : null
       }
     </div>
-  </fieldset>
-  <fieldset>
-    <legend>Log in</legend>
-    <p>Already have an account?</p>
-    <ButtonLink text="Log in" href="/login" style="secondary" />
   </fieldset>
 </form>
 

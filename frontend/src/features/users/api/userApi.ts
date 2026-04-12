@@ -19,3 +19,11 @@ export async function getUserOverview(context: APIContext) {
 
   return toServiceResult(result);
 }
+
+export async function patchUser(context: APIContext) {
+  const result = await requestApi<UserType | null>(context, USER_ENDPOINTS.users, {
+    method: "PATCH",
+  });
+
+  return toServiceResult(result);
+}

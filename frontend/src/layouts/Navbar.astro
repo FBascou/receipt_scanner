@@ -121,10 +121,7 @@ const user = Astro.locals.user;
       .nav-button {
         button {
           border-radius: 50%;
-          border: 1px solid black;
           corner-shape: circle;
-          padding: 0.5rem;
-          cursor: pointer;
         }
       }
     }
@@ -163,6 +160,7 @@ const user = Astro.locals.user;
     .nav-button-links:popover-open {
       display: grid;
       box-shadow: var(--box-shadow);
+      background-color: var(--bg);
       padding: 1rem;
       gap: 0.5rem;
       /* max-height: 500px; */

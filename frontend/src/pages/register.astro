@@ -2,7 +2,6 @@
 import { getRegisterAction } from "../features/auth/actions/getRegisterAction";
 import FormRegister from "../features/auth/components/FormRegister.astro";
 import Layout from "../layouts/Layout.astro";
-import Section from "../layouts/Section.astro";
 import type { RegisterSchemaType } from "../features/auth/types/authTypes";
 
 export const prerender = false;
@@ -30,7 +29,5 @@ if (Astro.request.method === "POST") {
 
 <Layout title="Register">
   <h1>Register</h1>
-  <Section>
-    <FormRegister errorMessage={errorMessage} values={values} />
-  </Section>
+  <FormRegister errorMessage={errorMessage} values={values} />
 </Layout>

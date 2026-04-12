@@ -1,33 +1,20 @@
-@import url(variables.css);
+@import "variables.css";
 
 h1 {
   font-size: var(--h1);
-  text-wrap: pretty;
-  color: var(--clr);
 }
 
 h2 {
   font-size: var(--h2);
   color: var(--clr-accent);
-  text-wrap: pretty;
 }
 
 h3 {
   font-size: var(--h3);
-  color: var(--clr);
-}
-
-li,
-p,
-tr,
-td {
-  font-size: var(--p);
-  color: var(--clr);
 }
 
 label,
 .label {
-  font-size: var(--p);
   color: var(--clr-tertiary);
 }
 

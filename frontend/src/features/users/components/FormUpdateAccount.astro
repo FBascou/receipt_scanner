@@ -7,6 +7,7 @@ interface Props {
   values: {
     email: string;
     password: string;
+    confirm: string;
   };
 }
 
@@ -14,8 +15,8 @@ const { errorMessage, values } = Astro.props;
 ---
 
 <form method="POST">
-  <fieldset name="form-login">
-    <legend>Login form</legend>
+  <fieldset name="form-register">
+    <legend>Register form</legend>
     <div class="form-group">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" value={values?.email} />
@@ -28,7 +29,13 @@ const { errorMessage, values } = Astro.props;
       <p class="message-error" id="password-error"></p>
     </div>
     <div class="form-group">
-      <Button text="Login" type="submit" />
+      <label for="confirm">Confirm Password</label>
+      <input type="password" id="confirm" name="confirm" value={values?.confirm} />
+      <button type="button" id="confirm-button">O</button>
+      <p class="message-error" id="confirm-error"></p>
+    </div>
+    <div class="form-group">
+      <Button text="Register" type="submit" />
       {
         errorMessage ? (
           <p class="message-error" id="form-error">
@@ -39,29 +46,26 @@ const { errorMessage, values } = Astro.props;
     </div>
   </fieldset>
   <fieldset>
-    <legend>Forgot your password</legend>
-    <p>Forgot your password?</p>
-    <ButtonLink text="Reset it" href="/forgot-password" style="secondary" />
-  </fieldset>
-  <fieldset>
-    <legend>Register</legend>
-    <p>Don't have an account?</p>
-    <ButtonLink text="Register" href="/register" style="secondary" />
+    <legend>Log in</legend>
+    <p>Already have an account?</p>
+    <ButtonLink text="Log in" href="/login" style="secondary" />
   </fieldset>
 </form>
 
 <script>
   import { handleForm, handleShowPasswordButton } from "../../../utils/utils";
-  import { LoginSchema } from "../schemas/authSchemas";
 
   const form = document.querySelector("form");
   const passwordInput: HTMLInputElement | null = document.querySelector("#password");
   const passwordButton: HTMLButtonElement | null = document.querySelector("#password-button");
+  const confirmPasswordInput: HTMLInputElement | null = document.querySelector("#confirm");
+  const confirmPasswordButton: HTMLButtonElement | null = document.querySelector("#confirm-button");
 
   handleShowPasswordButton(passwordButton, passwordInput);
+  handleShowPasswordButton(confirmPasswordButton, confirmPasswordInput);
 
   if (form instanceof HTMLFormElement) {
-    handleForm(form, LoginSchema);
+    handleForm(form, UpdateAccountSchema);
   }
 </script>
 
@@ -72,6 +76,19 @@ const { errorMessage, values } = Astro.props;
 
   #password-button {
     position-anchor: --password-input;
+    position: absolute;
+    right: calc(anchor(right) + 10px);
+    top: anchor(top);
+    align-self: anchor-center;
+    background-color: transparent;
+  }
+
+  #confirm {
+    anchor-name: --confirm-input;
+  }
+
+  #confirm-button {
+    position-anchor: --confirm-input;
     position: absolute;
     right: calc(anchor(right) + 10px);
     top: anchor(top);

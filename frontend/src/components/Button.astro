@@ -14,17 +14,22 @@ const { text, type = "button", style = "primary", disabled = false } = Astro.pro
 <button type={type} class={`button-${style}`} disabled={disabled}>{text}</button>
 
 <style>
-  .button-primary {
-    color: var(--clr-secondary);
-    background-color: var(--bg-accent);
+  button {
     box-shadow: var(--box-shadow);
     padding: 0.5rem;
   }
 
+  button:hover {
+    color: var(--clr-tertiary);
+  }
+
+  .button-primary {
+    color: var(--clr-secondary);
+    background-color: var(--bg-accent);
+  }
+
   .button-secondary {
     color: var(--clr-accent);
-    box-shadow: var(--box-shadow);
-    padding: 0.5rem;
   }
 
   .button-primary:hover,

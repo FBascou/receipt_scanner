@@ -1,6 +1,5 @@
 import z from "zod";
 import type { FetchStateType } from "../types/types";
-import { API_BASE_URL } from "../lib/config";
 
 export function getFormValues(form: HTMLFormElement) {
   const formData = new FormData(form);
@@ -61,5 +60,21 @@ export function getFetchState(result: any): FetchStateType {
 }
 
 export function redirectTo(path: string, id: string) {
-  return `${API_BASE_URL}/${path}/${id}`;
+  return `/${path}/${id}`;
 }
+
+export const handleShowPasswordButton = (
+  passwordButton: HTMLButtonElement | null,
+  passwordInput: HTMLInputElement | null,
+) => {
+  return passwordButton?.addEventListener("click", (event: Event) => {
+    event.preventDefault();
+
+    if (!passwordInput || !passwordButton) return;
+
+    const isPassword = passwordInput.type === "password";
+
+    passwordInput.type = isPassword ? "text" : "password";
+    passwordButton.textContent = isPassword ? "X" : "O";
+  });
+};

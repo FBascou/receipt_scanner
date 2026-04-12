@@ -1,5 +1,8 @@
 :root {
   color-scheme: light dark;
+  /* @media (prefers-reduced-motion: no-preference) {
+    interpolate-size: allow-keywords;
+  } */
 
   /* Font Families */
   /* "Segoe UI Adjusted",
@@ -21,20 +24,20 @@
   --p-hover: 1.2rem;
 
   /* Font Colors */
-  --clr-primary: rgb(0, 0, 0, 1);
-  --clr-secondary: rgb(255, 255, 255, 1);
-  --clr-tertiary: rgb(117, 117, 117);
-  --clr-accent: rgb(46, 80, 252);
-  --clr-success: rgb(0, 193, 3);
-  --clr-error: rgb(255, 0, 0, 1);
+  --clr-primary: rgb(0 0 0);
+  --clr-secondary: rgb(255, 255, 255);
+  --clr-tertiary: rgb(117 117 117);
+  --clr-accent: rgb(46 80 252);
+  --clr-success: rgb(0 193 3);
+  --clr-error: rgb(255, 0 0);
   --clr: light-dark(var(--clr-primary), var(--clr-secondary));
 
   /* Background Colors */
-  --bg-primary: rgb(255, 255, 255, 1);
-  --bg-secondary: rgb(40, 40, 40);
-  --bg-tertiary: rgb(211, 211, 211, 1);
+  --bg-primary: rgb(255, 255, 255);
+  --bg-secondary: rgb(40 40 40);
+  --bg-tertiary: rgb(211 211 211);
   --bg-accent: var(--clr-accent);
-  --bg-accent-hover: rgb(18, 90, 161);
+  --bg-accent-hover: var(--clr-accent);
   --bg: light-dark(var(--bg-primary), var(--bg-secondary));
 
   /* Borders and BoxShadows */
@@ -48,7 +51,7 @@
   --border-success: var(--border-size) solid var(--border-clr-success);
   --border-error: var(--border-size) solid var(--border-clr-error);
   /* 0.25 looks good in light and 0.5 looks good in dark, decide */
-  --box-shadow: 0 0 2px 1px rgb(0, 0, 0, 0.5);
+  --box-shadow: 0 0 2px 1px rgb(0 0 0 / 0.5);
 
   /* Paddings */
   --p-layout-inline: calc(2rem + 1.5625vw);
@@ -63,4 +66,11 @@
 :root[data-theme="dark"] {
   --clr: var(--clr-secondary);
   --bg: var(--bg-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --clr: var(--clr-secondary);
+    --bg: var(--bg-secondary);
+  }
 }

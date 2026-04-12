@@ -7,11 +7,11 @@ import PageEmptyState from "./PageEmptyState.astro";
 import PageErrorState from "./PageErrorState.astro";
 import TablePagination from "./TablePagination.astro";
 
-type Props = {
+interface Props {
   caption: string;
   headers: TableHeadersType;
   result: any;
-};
+}
 
 const { caption, headers, result } = Astro.props;
 
@@ -33,7 +33,7 @@ const pagination: TablePaginationType = { total_pages, page_size, current_page }
 ---
 
 {state === "error" && <PageErrorState message="Failed to load receipts" />}
-{state === "error" && <PageEmptyState message="No receipts found" />}
+{state === "empty" && <PageEmptyState message="No receipts found" />}
 {
   state === "success" && (
     <div>
@@ -49,7 +49,7 @@ const pagination: TablePaginationType = { total_pages, page_size, current_page }
           </tr>
         </thead>
         <tbody>
-          {items.map((item, index) => (
+          {items.map((item, index: number) => (
             <tr>
               {headers.map((header) => {
                 // Special column: index
@@ -142,7 +142,7 @@ const pagination: TablePaginationType = { total_pages, page_size, current_page }
 
   tr:has(td):hover,
   tr:has(a:focus-visible) {
-    background-color: light-dark(var(--bg-tertiary), var(--bg-secondary));
+    background-color: var(--bg-tertiary);
   }
 
   th,

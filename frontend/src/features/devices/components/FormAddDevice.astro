@@ -2,10 +2,10 @@
 import Button from "../../../components/Button.astro";
 import type { DeviceAddSchemaType } from "../types/deviceTypes";
 
-type Props = {
+interface Props {
   response: { message: string; code: string } | null;
   values: DeviceAddSchemaType;
-};
+}
 
 const { response, values } = Astro.props;
 ---
@@ -55,27 +55,3 @@ const { response, values } = Astro.props;
     handleForm(form, DeviceAddSchema);
   }
 </script>
-
-<style>
-  form {
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  legend {
-    visibility: hidden;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  input {
-    padding: 0.5rem;
-    border: 1px solid black;
-  }
-</style>

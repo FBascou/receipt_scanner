@@ -1,5 +1,4 @@
 ---
-import "../styles/reset.css";
 import "../styles/main.css";
 import Header from "./Header.astro";
 
@@ -21,22 +20,42 @@ const { title } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="light dark" />
     <title>RecScan - {title}</title>
+    <script is:inline>
+      (() => {
+        const style = document.createElement("style");
+        style.innerHTML = "* { transition: none !important }";
+        document.head.appendChild(style);
+
+        const savedTheme = localStorage.getItem("theme");
+
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+        } else {
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+        }
+
+        setTimeout(() => style.remove(), 1);
+      })();
+    </script>
   </head>
   <body>
     <Header />
+    <!-- <div class="container"> -->
     <main id="main">
       <!-- Maybe add <h1>{title}</h1> here since all pages have currently a title -->
       <slot />
     </main>
+    <!-- </div> -->
   </body>
 </html>
 
-<script is:inline>
+<!-- <script is:inline>
   const savedTheme = localStorage.getItem("theme");
-  if (savedTheme && savedTheme !== "AUTO") {
+  if (savedTheme && savedTheme !== "auto") {
     document.documentElement.setAttribute("data-theme", savedTheme.toLowerCase());
   }
-</script>
+</script> -->
 
 <style>
   main {

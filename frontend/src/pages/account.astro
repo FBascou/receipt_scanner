@@ -1,0 +1,34 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FormUpdateAccount from "../features/users/components/FormUpdateAccount.astro";
+
+export const prerender = false;
+
+let errorMessage: string | null = null;
+let values: UpdateAccountSchemaType = {
+  email: "",
+  first_name: "",
+  last_name: "",
+  country: "",
+  password: "",
+  confirm: "",
+};
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+  values = Object.fromEntries(data) as UpdateAccountSchemaType;
+
+  const result = await getUpdateAccountAction(values, Astro);
+
+  if (result instanceof Response) {
+    return result;
+  }
+
+  errorMessage = result?.message ?? null;
+}
+---
+
+<Layout title="Update">
+  <h1>Update</h1>
+  <FormUpdateAccount errorMessage={errorMessage} values={values} />
+</Layout>

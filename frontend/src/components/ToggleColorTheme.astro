@@ -1,7 +1,7 @@
 <select name="color-theme" id="color-theme">
-  <option value="AUTO">Auto</option>
-  <option value="DARK">Dark</option>
-  <option value="LIGHT">Light</option>
+  <option value="auto">Auto</option>
+  <option value="dark">Dark</option>
+  <option value="light">Light</option>
 </select>
 
 <script>
@@ -11,23 +11,23 @@
   const savedTheme = localStorage.getItem("theme");
 
   // Set initial state
-  if (savedTheme && savedTheme !== "AUTO") {
-    root.setAttribute("data-theme", savedTheme.toLowerCase());
+  if (savedTheme && savedTheme !== "auto") {
+    root.setAttribute("data-theme", savedTheme);
     select.value = savedTheme;
   } else {
     root.removeAttribute("data-theme");
-    select.value = "AUTO";
+    select.value = "auto";
   }
 
   select.addEventListener("change", (event) => {
     const target = event.target as HTMLSelectElement;
     const value = target.value;
 
-    if (value === "AUTO") {
+    if (value === "auto") {
       root.removeAttribute("data-theme");
-      localStorage.setItem("theme", "AUTO");
+      localStorage.setItem("theme", "auto");
     } else {
-      root.setAttribute("data-theme", value.toLowerCase());
+      root.setAttribute("data-theme", value);
       localStorage.setItem("theme", value);
     }
   });

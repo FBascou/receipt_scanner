@@ -2,7 +2,6 @@
 import { getLoginAction } from "../features/auth/actions/getLoginAction";
 import FormLogin from "../features/auth/components/FormLogin.astro";
 import Layout from "../layouts/Layout.astro";
-import Section from "../layouts/Section.astro";
 import type { LoginSchemaType } from "../features/auth/types/authTypes";
 
 export const prerender = false;
@@ -29,7 +28,5 @@ if (Astro.request.method === "POST") {
 
 <Layout title="Login">
   <h1>Login</h1>
-  <Section>
-    <FormLogin errorMessage={errorMessage} values={values} />
-  </Section>
+  <FormLogin errorMessage={errorMessage} values={values} />
 </Layout>

@@ -181,27 +181,14 @@ h1,
 h2,
 h3,
 h4,
-button,
-input,
-label {
-  line-height: 1.1;
-}
-
-h1,
-h2,
-h3,
-h4,
 h5,
-h6 {
-  text-wrap: balance;
-}
-
+h6,
 p {
   text-wrap: pretty;
 }
 
-/* Add to global variables */
-button {
+button,
+a {
   cursor: pointer;
 }
 

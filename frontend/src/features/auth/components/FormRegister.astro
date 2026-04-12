@@ -2,14 +2,14 @@
 import Button from "../../../components/Button.astro";
 import ButtonLink from "../../../components/ButtonLink.astro";
 
-type Props = {
+interface Props {
   errorMessage: string | null;
   values: {
     email: string;
     password: string;
     confirm: string;
   };
-};
+}
 
 const { errorMessage, values } = Astro.props;
 ---
@@ -53,9 +53,8 @@ const { errorMessage, values } = Astro.props;
 </form>
 
 <script>
-  import { handleShowPasswordButton } from "../utils/authUtils";
   import { RegisterSchema } from "../schemas/authSchemas";
-  import { handleForm } from "../../../utils/utils";
+  import { handleForm, handleShowPasswordButton } from "../../../utils/utils";
 
   const form = document.querySelector("form");
   const passwordInput: HTMLInputElement | null = document.querySelector("#password");
@@ -72,28 +71,6 @@ const { errorMessage, values } = Astro.props;
 </script>
 
 <style>
-  form {
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  legend {
-    visibility: hidden;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  input {
-    padding: 0.5rem;
-    border: 1px solid black;
-  }
-
   #password {
     anchor-name: --password-input;
   }
